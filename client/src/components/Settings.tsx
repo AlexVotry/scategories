@@ -1,3 +1,5 @@
+// settings has the join form, adjust timer, add categories, choose how many categories for the list.
+
 import React, {useState, useEffect} from 'react';
 import { styles } from '../cssObjects';
 import JoinTeam from './JoinTeam';

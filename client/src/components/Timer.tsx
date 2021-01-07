@@ -1,3 +1,5 @@
+// displays the timer.
+
 import React, {useContext} from 'react';
 import TimerContext from '../contexts/TimerContext';
 

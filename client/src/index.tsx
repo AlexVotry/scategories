@@ -13,6 +13,8 @@ import LetterContext from './contexts/LetterContext';
 import CategoryContext from './contexts/CategoryContext';
 import ButtonContext from './contexts/ButtonContext';
 import TimerContext from './contexts/TimerContext';
+import TeamsContext from './contexts/TeamsContext';
+import socket from './service/socketConnection';
 
 
 export default function Index(): JSX.Element {
@@ -21,13 +23,15 @@ export default function Index(): JSX.Element {
   const [currentLetter, setCurrentLetter] = useState('');
   const [categories, setCategories] = useState(categoryList);
   const [currentList, setCurrentList] = useState(arrayString);
+  const [list, setList] = useState({});
   const [counter, setCounter] = useState(60);
   const [gameState, setGameState] = useState<'running' | 'paused' | 'ready'>('ready');
   const buttons = {
     resetEverything,
     startGame,
-    stopGame
-  }
+    stopGame,
+    createTeams
+  };
 
   function resetEverything () {
     setGameState('ready');
@@ -51,6 +55,11 @@ export default function Index(): JSX.Element {
     setGameState('paused');
   }
 
+  function createTeams () {
+    socket.emit('createTeams', true);
+    socket.on('newTeams', data => setList(data));
+  }
+
   useEffect(() => {
    if (counter > 0 && gameState === 'running') {
      setTimeout(() => setCounter(counter - 1), 1000);
@@ -59,7 +68,7 @@ export default function Index(): JSX.Element {
    } else if(counter === 0) {
      setGameState('ready');
    }
-
+   socket.on('data', data => setList(data));
   }, [counter, gameState]);
 
   const showCorrectPage = () => {
@@ -72,7 +81,9 @@ export default function Index(): JSX.Element {
       <CategoryContext.Provider value = {currentList}>
       <TimerContext.Provider value = {counter}>
       <ButtonContext.Provider value = {buttons}>
-        {showCorrectPage()}
+        <TeamsContext.Provider value = {list}>
+          {showCorrectPage()}
+        </TeamsContext.Provider>
       </ButtonContext.Provider>
       </TimerContext.Provider>
       </CategoryContext.Provider>

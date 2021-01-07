@@ -1,3 +1,5 @@
+// shows the scategory list for each team.
+
 import React, {useContext} from 'react';
 import CategoryContext from '../contexts/CategoryContext';
 import LetterContext from '../contexts/LetterContext';
@@ -22,6 +24,7 @@ const PlayerList = () => {
   return (
     <div className="row">
       <ol className="col s4">
+        Player list!!!
         {listForm()}
       </ol>
     </div>

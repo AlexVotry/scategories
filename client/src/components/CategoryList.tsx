@@ -1,3 +1,5 @@
+// create scategory list.
+
 import React, {useContext} from 'react';
 import CategoryContext from '../contexts/CategoryContext';
 

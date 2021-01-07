@@ -1,3 +1,5 @@
+// shows the scategory list (PlayerList component), letter, timer, and control buttons for each team. 
+
 import React from 'react';
 import PlayerList from './PlayerList';
 import Timer from './Timer';
@@ -17,7 +19,7 @@ const TeamPlayers = () => {
               <Letter />
               <Timer />
             </div>
-              
+             
             <PlayerList />
             <ControlButtons />
           </div>

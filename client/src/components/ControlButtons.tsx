@@ -1,3 +1,5 @@
+//group of buttons.
+
 import React, {useContext} from 'react';
 import ButtonContext from '../contexts/ButtonContext';
 
@@ -20,6 +22,9 @@ const ControlButtons = () => {
     buttons.resetEverything();
   }
 
+  const createTeams = () => {
+    buttons.createTeams();
+  }
   // disabled: <a class="btn disabled">Button</a>
 
   return (
@@ -28,6 +33,7 @@ const ControlButtons = () => {
       <a className="waves-effect waves-light btn" onClick={stop} >Stop</a>
       <a className="waves-effect waves-light btn" onClick={reset} >Reset Round</a>
       <a className="waves-effect waves-light btn" onClick={start} >Reset Game</a>
+      <a className="waves-effect waves-light btn" onClick={createTeams} >Create Teams</a>
     </div>
   )
 }
