@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const { toUnicode } = require('punycode');
 const { User } = require('./models');
-const uri = "mongodb+srv://alexVotry:$category@cluster0.r7i2f.mongodb.net/scattegories?retryWrites=true&w=majority";
+const { mongoUrl } = require('./secrets');
+const uri = mongoUrl;
 
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
