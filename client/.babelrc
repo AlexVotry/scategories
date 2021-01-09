@@ -3,5 +3,10 @@
     "@babel/env",
     "@babel/react",
     "@babel/typescript"
+  ],
+  "plugins": [
+    [
+      "babel-plugin-transform-class-properties"
+    ]
   ]
 }

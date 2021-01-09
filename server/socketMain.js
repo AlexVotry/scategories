@@ -2,59 +2,52 @@ const mongoose = require('mongoose');
 const { toUnicode } = require('punycode');
 const { User } = require('./models');
 const { mongoUrl } = require('./secrets');
+const _ = require('lodash');
 const uri = mongoUrl;
 
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 
 const db = require('./models');
 const teams = { Blue: [], Red: [], Green: [], Purple: [], Gold: [] };
 const players = [];
 
 function socketMain(io, socket) {
-  socket.emit('data', teams);
+  let room = '';
+  socket.emit('teams', teams);
 
-  socket.on('joinTeam', formInfo => {
+  socket.on('joinTeam', async formInfo => {
     const {name, group, admin} = formInfo;
 
     socket.join(group);
+    room = group;
     console.log(`${name} joined ${group}`);
-    addUserToGroup(formInfo);
+    const currentUser = await addUserToGroup(formInfo);
+    console.log('cur:', currentUser);
+    socket.emit('currentUser:', currentUser);
   });
 
   socket.on('createTeams', async data => {
     const newTeams = await createTeams();
-    console.log('newteams:', newTeams);
-    socket.emit('newTeams', newTeams);
+    io.to(room).emit('newTeams', newTeams);
   });
 }
 
-function addUserToGroup(user) {
-  return new Promise((resolve, reject) => {
-    db.User.findOne({name: user.name, email: user.email},
-      (err, doc) => {
-        if(err) {
-          throw err;
-          reject(err);
-         } else {
-          if (doc === null) {
-            let newUser = new User(user);
-            newUser.save();
-            resolve('added');
-          } else {
-            // need to update user.admin here.
-            resolve('found');
-          }
-          players.push(user.name);
-          const currentUser = {player: user.name, admin: user.admin};
-          socket.emit('currentUser:', currentUser);
-        }
-      })
-  });
+
+const addUserToGroup = async user => {
+  await db.User.findOneAndUpdate({ email: user.email},
+    user, { upsert: true }, (err, doc) => {
+      if (err) throw err;
+      else {
+        players.push(user);
+      }
+    })
+
+    return user;
 }
 
-function createTeams() {
+async function createTeams() {
   console.log('players:', players);
-  const unique = players.filter(onlyUnique);
+  const unique = _.uniqWith(players, _.isEqual);
   const len = unique.length;
   let noOfTeams = 0;
 
@@ -69,14 +62,24 @@ function createTeams() {
 
   while (unique.length) {
     for (let team in teams) {
-      const eachTeam = unique.splice(0, 1);
-      teams[team].push(...eachTeam);
+      let eachUser = unique.splice(0, 1);
+      if (eachUser.length) {
+        eachUser[0].team = team
+        teams[team].push(...eachUser);
+        await db.User.findOneAndUpdate({ email:  eachUser[0].email },
+          { team: team }, (err, doc) => {
+            if (err) throw err;
+            else {
+              eachUser = [];
+            }
+          }
+        );
+      }
     }
   }
 
  return teams;
 }
 
-const onlyUnique = (value, index, self) => self.indexOf(value) === index;
-
 module.exports = socketMain;
+

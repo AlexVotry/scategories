@@ -1,7 +1,6 @@
 // displays the list of teams and the players on each team.
 
 import React, { useContext } from 'react';
-import socket from '../service/socketConnection';
 import TeamsContext from '../contexts/TeamsContext';
 
 function TeamList () {
@@ -28,7 +27,7 @@ console.log('context', list);
   const parseTeamMembers = (members) => {
     return members.map(member => {
       return (
-        <li key={member}>{member}</li>
+        <li key={member.name}>{member.name}</li>
       )
     })
   }

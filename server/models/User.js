@@ -5,6 +5,7 @@ const User = new Schema({
   name: String,
   email: String,
   admin: Boolean,
+  team: String,
   wins: {type: Number, default: 0 },
   losses: {type: Number, default: 0 }
 });
