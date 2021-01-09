@@ -9,32 +9,36 @@ import React, { useReducer, useEffect } from "react";
 import { getContext, getProvider } from './helper';
 import {UpdateContext} from '../types';
 
-const UserContext = React.createContext<UpdateContext | undefined>(undefined);
+export default React.createContext<UpdateContext | undefined>(undefined);
 
-const localState = JSON.parse(localStorage.getItem("userInfo"));
+// const localState = JSON.parse(localStorage.getItem("userInfo"));
 
-let reducer = (user, newUser) => {
-  if (!newUser) {
-    localStorage.removeItem('userInfo');
-    return initialState;
-  };
-  return { ...user, ...newUser };
-}
+// // function UserInfo() {
+// //   getContext(UserContext, 'UserContext');
+// // }
 
-const initialState = {
-  name: ''
-};
+// let reducer = (user, newUser) => {
+//   if (!newUser) {
+//     localStorage.removeItem('userInfo');
+//     return initialState;
+//   };
+//   return { ...user, ...newUser };
+// }
 
-// replaces "UserContext.Provider value='something'" also puts user into local storage so we don't loose it on refresh.
-function UserProvider (props: any) {
-  const [user, setUser] = useReducer(reducer, localState || initialState);
+// const initialState = {
+//   name: ''
+// };
 
-  useEffect(() => {
-    localStorage.setItem('userInfo', JSON.stringify(user));
-  }, [user]);
+// // replaces "UserContext.Provider value='something'" also puts user into local storage so we don't loose it on refresh.
+// function UserProvider (props: any) {
+//   const [user, setUser] = useReducer(reducer, localState || initialState);
 
-  return getProvider(UserContext, user, setUser, props);
-};
+//   useEffect(() => {
+//     localStorage.setItem('userInfo', JSON.stringify(user));
+//   }, [user]);
 
-export default { UserProvider, UserContext };
+//   return getProvider(UserContext, user, setUser, props);
+// };
+
+// export default { UserProvider, UserContext };
 
