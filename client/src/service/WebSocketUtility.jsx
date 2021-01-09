@@ -5,7 +5,7 @@ import { find, remove, isEqual, isEmpty } from 'lodash';
 import { assignTeam } from '../service/parseTeams';
 
 import App from '../components/App/App';
-import UserContext from '../contexts/UserContext';
+import { UserProvider } from '../contexts/UserContext';
 import TeamsContext from '../contexts/TeamsContext';
 
 
@@ -40,17 +40,18 @@ class WebSocketUtility extends React.Component {
       const team = !isEmpty(this.state.user) ? assignTeam(teams, this.state.user) : null;
       const newUser = {...this.state.user, team };
       this.setState({ user: newUser });
-    })
+
+    }).emit('myTeam', team);
   }
 
 
   render () {
     return (
-      <UserContext.Provider value={{ user: this.state.user, update: this.update }}>
+      <UserProvider value={{ user: this.state.user, update: this.update }}>
         <TeamsContext.Provider value={this.state.teams}>
           <App/>
         </TeamsContext.Provider>
-      </UserContext.Provider>
+      </UserProvider>
     )
   }
 }
