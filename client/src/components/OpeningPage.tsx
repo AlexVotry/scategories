@@ -23,7 +23,6 @@ const OpeningPage = () => {
     if (isEmpty(user)) return null;
     const name = user.name ? `Player: ${user.name}` : '';
     const team = user.team ? `Team: ${user.team}` : '';
-    console.log('display user:', user.name, name);
       return (
         <>
         <h5>{name}</h5>

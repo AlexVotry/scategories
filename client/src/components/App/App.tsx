@@ -16,7 +16,7 @@ import socket from '../../service/socketConnection';
 import { assignTeam } from '../../service/parseTeams';
 
 
-function App(): JSX.Element {
+function App({gameState}): JSX.Element {
   const arrayString: string[] = [];
   const [letters, setLetters] = useState(Letters);
   const [currentLetter, setCurrentLetter] = useState('');
@@ -25,7 +25,8 @@ function App(): JSX.Element {
   // const [list, setList] = useState({});
   // const [user, setUser] = useState<UserType>({});
   const [counter, setCounter] = useState(60);
-  const [gameState, setGameState] = useState<'running' | 'paused' | 'ready'>('ready');
+  // let [gameState, setGameState] = useState(props.gameState);
+  // const [gameState, setGameState] = useState<'running' | 'paused' | 'ready'>('ready');
   const buttons = {
     resetEverything,
     startGame,
@@ -36,7 +37,7 @@ function App(): JSX.Element {
   // const userInfo = {user, update};
 
   function resetEverything() {
-    setGameState('ready');
+    // setGameState('ready');
     const result = getLetter(letters);
     const cats = getCategories(categories, 6);
     setCurrentLetter(result[0]);
@@ -50,11 +51,11 @@ function App(): JSX.Element {
     if (gameState === 'ready') {
       resetEverything();
     }
-    setGameState('running');
+    // setGameState('running');
   }
 
   function stopGame() {
-    setGameState('paused');
+    // setGameState('paused');
   }
 
   function createTeams() {
@@ -67,11 +68,13 @@ function App(): JSX.Element {
     } else if (gameState === 'ready') {
       setCounter(60);
     } else if (counter === 0) {
-      setGameState('ready');
+      // gameState = 'ready';
+      // setGameState('ready');
     }
   }, [counter, gameState]);
 
   const showCorrectPage = () => {
+    console.log('show currnt page:', gameState)
     return gameState == 'running' ? <TeamPlayers /> : <OpeningPage />;
   }
 

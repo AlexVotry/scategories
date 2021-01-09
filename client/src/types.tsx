@@ -8,7 +8,8 @@ export interface UserType {
   name?: string,
   team?: string,
   admin?: string,
-  email?: string
+  email?: string,
+  group?: string
 }
 
 export interface UpdateContext {

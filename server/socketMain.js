@@ -7,11 +7,12 @@ const uri = mongoUrl;
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 
 const db = require('./models');
-const teams = { Blue: [], Red: [], Green: [], Purple: [], Gold: [] };
+let teams = {};
 const players = [];
 
 function socketMain(io, socket) {
   let room = '';
+  let gamestate = 'ready';
   socket.emit('teams', teams);
 
   socket.on('joinTeam', async formInfo => {
@@ -27,6 +28,11 @@ function socketMain(io, socket) {
   socket.on('createTeams', async data => {
     const newTeams = await createTeams();
     io.to(room).emit('newTeams', newTeams);
+  });
+
+  socket.on('changeGameState', (gameState) => {
+    console.log('gamestate:', gameState)
+    io.to(room).emit('gameState', gameState);
   });
 
   // during active play join (team); between play join (room);
@@ -47,6 +53,7 @@ const addUserToGroup = async user => {
 }
 
 async function createTeams() {
+  teams = { Blue: [], Red: [], Green: [], Purple: [], Gold: [] };
   const unique = uniqWith(players, isEqual);
   const len = unique.length;
   let noOfTeams = 0;

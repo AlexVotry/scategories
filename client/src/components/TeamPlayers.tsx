@@ -6,16 +6,20 @@ import Timer from './Timer';
 import Letter from './Letter';
 import ControlButtons from './ControlButtons';
 import UserContext from '../contexts/UserContext';
-import { styles } from '../cssObjects';
+import { styles, colors } from '../cssObjects';
 
 const TeamPlayers = () => {
   const {user} = useContext(UserContext);
+  const cardStyle = {
+    backgroundColor: colors[user.team],
+    color: colors.White
+  }
 
   return (
     <div className="row">
       <div className="col s12 m12">
-        <div className="card blue-grey darken-1">
-          <div className="card-content white-text" >
+        <div className="card" style={cardStyle} >
+          <div className="card-content" >
             <div style={styles.flexRow}>
               <div>TEAM {user.team}</div>
               player: {user.name}

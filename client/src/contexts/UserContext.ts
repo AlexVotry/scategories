@@ -1,12 +1,5 @@
-// import React from 'react';
-// import {UpdateContext} from '../types';
-
-// const localState = JSON.parse(localStorage.getItem("user"));
-
-// export default React.createContext<UpdateContext | undefined>(undefined);
-
 import React, { useReducer, useEffect } from "react";
-import { getContext, getProvider } from './helper';
+// import { getContext, getProvider } from './helper';
 import {UpdateContext} from '../types';
 
 export default React.createContext<UpdateContext | undefined>(undefined);

@@ -6,8 +6,6 @@ import TeamsContext from '../contexts/TeamsContext';
 function TeamList () {
   const list = useContext(TeamsContext);
   
-console.log('context', list);
-
   const renderTeams = () => {
     return Object.keys(list).map(team => {
       const members = list[team];

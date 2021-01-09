@@ -16,10 +16,12 @@ const JoinTeam = () => {
   }
 
   const handleSubmit = (e) => {
-    const formInfo = {name, email, group, admin}
+    e.preventDefault();
+    localStorage.removeItem('userInfo');
+    const formInfo = {name, email, group, admin};
     socket.emit('joinTeam', formInfo);
     user.update(formInfo);
-    e.preventDefault();
+    localStorage.setItem('userInfo', JSON.stringify(formInfo));
   }
 
   return (
