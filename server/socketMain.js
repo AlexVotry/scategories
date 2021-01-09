@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
-const { toUnicode } = require('punycode');
 const { User } = require('./models');
 const { mongoUrl } = require('./secrets');
-const _ = require('lodash');
+const { uniqWith, isEqual } = require('lodash');
 const uri = mongoUrl;
 
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
@@ -22,7 +21,6 @@ function socketMain(io, socket) {
     room = group;
     console.log(`${name} joined ${group}`);
     const currentUser = await addUserToGroup(formInfo);
-    console.log('cur:', currentUser);
     socket.emit('currentUser:', currentUser);
   });
 
@@ -30,6 +28,9 @@ function socketMain(io, socket) {
     const newTeams = await createTeams();
     io.to(room).emit('newTeams', newTeams);
   });
+
+  // during active play join (team); between play join (room);
+  socket.on('myTeam', team => socket.join(team));
 }
 
 
@@ -46,8 +47,7 @@ const addUserToGroup = async user => {
 }
 
 async function createTeams() {
-  console.log('players:', players);
-  const unique = _.uniqWith(players, _.isEqual);
+  const unique = uniqWith(players, isEqual);
   const len = unique.length;
   let noOfTeams = 0;
 
