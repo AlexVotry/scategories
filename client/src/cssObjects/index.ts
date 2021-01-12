@@ -15,8 +15,7 @@ export const styles = {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    flexWrap: 'wrap'
+    alignItems: 'center'
   },
   hover: <CSSProperties> {
     display: 'block'

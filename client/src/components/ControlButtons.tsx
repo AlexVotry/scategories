@@ -1,7 +1,7 @@
 //group of buttons.
 
 import React, {useContext} from 'react';
-import ButtonContext from '../contexts/ButtonContext';
+// import ButtonContext from '../contexts/ButtonContext';
 import UserContext from '../contexts/UserContext';
 import socket from '../service/socketConnection';
 
@@ -12,24 +12,25 @@ type ControlButtonProps = {
 }
 
 const ControlButtons = () => {
-  const buttons = useContext(ButtonContext);
+  // const buttons = useContext(ButtonContext);
   const {user} = useContext(UserContext);
 
   const start = () => {
-    buttons.startGame();
+    // buttons.startGame();
     socket.emit('changeGameState', 'running');
   }
   const stop = () => {
-    buttons.stopGame();
-    socket.emit('changeGameState', 'paused');
+    // buttons.stopGame();
+    socket.emit('pushPause', 'paused');
   }
   const reset = () => {
-    buttons.resetEverything();
-    socket.emit('changeGameState', 'ready');
+    // buttons.resetEverything();
+    socket.emit('changeGameState', 'reset');
   }
 
   const createTeams = () => {
-    buttons.createTeams();
+    socket.emit('createTeams', true);
+    // buttons.createTeams();
   }
   // disabled: <a class="btn disabled">Button</a>
   if (!user.admin) return <div></div>;

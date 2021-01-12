@@ -1,39 +1,37 @@
-// shows the scategory list (PlayerList component), letter, timer, and control buttons for each team. 
+// shows the scategory list (GameSheet component), letter, timer, and control buttons for each team. 
 
 import React, { useContext } from 'react';
-import PlayerList from './PlayerList';
+import GameSheet from './GameSheet';
 import Timer from './Timer';
 import Letter from './Letter';
 import ControlButtons from './ControlButtons';
 import UserContext from '../contexts/UserContext';
+import TeamsContext from '../contexts/TeamsContext';
 import { styles, colors } from '../cssObjects';
 
-const TeamPlayers = () => {
+const CurrentPlayerCard = () => {
   const {user} = useContext(UserContext);
+  const teams = useContext(TeamsContext);
   const cardStyle = {
     backgroundColor: colors[user.team],
     color: colors.White
   }
+  const team = teams[user.team];
 
   return (
-    <div className="row">
-      <div className="col s12 m12">
-        <div className="card" style={cardStyle} >
-          <div className="card-content" >
+        <div  style={cardStyle} >
+          <div className="cardContent" >
             <div style={styles.flexRow}>
               <div>TEAM {user.team}</div>
               player: {user.name}
               <Letter />
               <Timer />
             </div>
-             
-            <PlayerList />
+            <GameSheet />
             <ControlButtons />
           </div>
         </div>
-      </div>
-    </div>
   )
 }
 
-export default TeamPlayers;
+export default CurrentPlayerCard;
