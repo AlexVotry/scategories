@@ -2,17 +2,22 @@ const mongoose = require('mongoose');
 const { User } = require('./models');
 const { mongoUrl } = require('./secrets');
 const { uniqWith, isEqual } = require('lodash');
+const handleGame = require('./services/handleGame');
 const uri = mongoUrl;
+
+const mockTeams = require('./data/mockTeams');
 
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 
 const db = require('./models');
 let teams = {};
 const players = [];
+let counter = 10;
+let myTeam;
 
 function socketMain(io, socket) {
   let room = '';
-  let gamestate = 'ready';
+
   socket.emit('teams', teams);
 
   socket.on('joinTeam', async formInfo => {
@@ -31,12 +36,21 @@ function socketMain(io, socket) {
   });
 
   socket.on('changeGameState', (gameState) => {
-    console.log('gamestate:', gameState)
     io.to(room).emit('gameState', gameState);
+    handleGame(io, socket, room, gameState, counter);
   });
 
   // during active play join (team); between play join (room);
-  socket.on('myTeam', team => socket.join(team));
+  socket.on('myTeam', team => {
+    socket.join(team);
+    myTeam = team;
+  });
+  socket.on('newGuess', newGuesses => {
+    console.log('newGuess:', newGuesses, myTeam);
+    // const { answers, name, team } = newGuesses;
+    // io.to(myTeam).emit('updateAnswers', newGuesses);
+    io.to(room).emit('updateAnswers', newGuesses);
+  });
 }
 
 
@@ -53,7 +67,9 @@ const addUserToGroup = async user => {
 }
 
 async function createTeams() {
-  teams = { Blue: [], Red: [], Green: [], Purple: [], Gold: [] };
+  // teams = { Blue: [], Red: [], Green: [], Purple: [], Gold: [] };
+  teams = mockTeams;
+  
   const unique = uniqWith(players, isEqual);
   const len = unique.length;
   let noOfTeams = 0;
