@@ -20,7 +20,8 @@ function WebSocketUtility () {
   const [timer, setTimer] = useState(60);
   const [currentLetter, setCurrentLetter] = useState('');
   const [categories, setCategories] = useState([]);
-  const [otherAnswers, setOtherAnswers] = useState({})
+  // const [otherAnswers, setOtherAnswers] = useState({})
+  const [finalAnswers, setFinalAnswers] = useState([])
 
   const update = user => setUser(user);
   // const divvyTeams = teams => this.setState({ teams });
@@ -29,7 +30,7 @@ function WebSocketUtility () {
     initialize();
     updateUser();
     // updateTeams();
-  }, [user, teams, gameState, otherAnswers]);
+  }, [user, teams, gameState]);
 
   const updateUser = () => {
     socket.on('currentUser', user => setUser(user));
@@ -61,6 +62,12 @@ function WebSocketUtility () {
       setTimer(clock);
     });
 
+    socket.on('AllSubmissions', finalAnswers => {
+      setGameState('ready');
+      setFinalAnswers(finalAnswers);
+      console.log('finalAnswers', finalAnswers)
+    });
+
     // socket.on('updateAnswers', newGuesses => {
     //   const { answers, name } = newGuesses;
     //   console.log('newGuess:', answers)
@@ -75,7 +82,7 @@ function WebSocketUtility () {
         <CategoryContext.Provider value={categories}>
           <LetterContext.Provider value={currentLetter}>
             <TimerContext.Provider value={timer}>
-              <App gameState={gameState} />
+              <App gameState={gameState} finalAnswers={finalAnswers}/>
             </TimerContext.Provider>
           </LetterContext.Provider>
         </CategoryContext.Provider>

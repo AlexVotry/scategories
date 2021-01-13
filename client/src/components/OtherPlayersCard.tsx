@@ -27,7 +27,7 @@ const OtherPlayersCard = () => {
       return (
         <div key={name}>
           <div >
-              player: {name}
+              {name}
               <OthersGameSheet name={name}/>
           </div >
         </div>

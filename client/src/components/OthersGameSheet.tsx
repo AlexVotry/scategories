@@ -3,20 +3,36 @@
 import React, { useContext, useState, useEffect } from 'react';
 import CategoryContext from '../contexts/CategoryContext';
 import socket from '../service/socketConnection';
+import {colors} from '../cssObjects';
 
 const OthersGameSheet = (props) => {
   const list = useContext(CategoryContext);
   const [guesses, setGuesses] = useState(new Map());
+  const [messages, setMessages] = useState([]);
+  const otherMessages = [];
+  const answerStle = {
+    backgroundColor: colors.White,
+    color: colors.Red,
+    width: "100%"
+  }
 
   const listForm = () => {
     return list.map((category, index) => {
       const guess = guesses.has(index) ? guesses.get(index) : '';
       return (
         <li key={index}>
-          {category} -- {guess[index]}
+          <div style={answerStle}>{guess} </div>
         </li>
       )
     })
+  }
+
+  const showMessages = () => {
+    console.log(messages, 'showMessages')
+    if (!messages.length) return;
+    return messages.map((message, index) => {
+      return <div key={`${props.name}_${index}`}>{message}</div>
+    });
   }
 
   useEffect(() => {
@@ -29,14 +45,27 @@ const OthersGameSheet = (props) => {
         setGuesses(new Map(guesses.set(answers[0], answers[1])));
       }
     })
+
+    socket.on('updateMessage', newMessages => {
+      const { message, name } = newMessages;
+
+      if (name === props.name) {
+        setMessages(arr => [...arr, message]);
+      }
+    });
   }, [])
 
   return (
-    <div className="row">
-      <ol className="col s4">
-        {listForm()}
-      </ol>
-    </div>
+    <>
+      <div className="row">
+        <ol className="col s4">
+          {listForm()}
+        </ol>
+      </div>
+        <div>
+          {showMessages()}
+        </div>
+    </>
   )
 };
 

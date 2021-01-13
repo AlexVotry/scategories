@@ -6,7 +6,7 @@ import OtherPlayersCard from '../OtherPlayersCard';
 
 import { styles } from '../../cssObjects';
 
-function App({gameState}): JSX.Element {
+function App({gameState, finalAnswers}): JSX.Element {
 
   const showCorrectPage = () => {
     if (gameState === 'running') {
@@ -18,7 +18,7 @@ function App({gameState}): JSX.Element {
       );
     }
 
-    return <OpeningPage />;
+    return <OpeningPage finalAnswers={finalAnswers}/>;
   }
 
 return showCorrectPage();

@@ -7,7 +7,7 @@ const mockTeams = {
   Red: [
     { name: "Hank", email: '', team: 'Red', admin: false, group: 'family' },
     { name: "Fred", email: '', team: 'Red', admin: false, group: 'family' },
-    { name: "Sarah", email: '', team: 'Red', admin: false, group: 'family' }
+    { name: "Julie", email: '', team: 'Red', admin: false, group: 'family' }
   ], 
   Green: [
     { name: "Tammi", email: '', team: 'Green', admin: false, group: 'family' },
