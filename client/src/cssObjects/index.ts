@@ -1,8 +1,13 @@
 import { CSSProperties } from "react"
 
 export const colors = {
-  white: '#fff',
-  blue: '#bababa'
+  White: '#fff',
+  Blue: '#2574a9',
+  Red: '#96281b',
+  Green: '#049372',
+  Purple: '#674172',
+  Gold: '#f2d984'
+
 }
 
 export const styles = {
@@ -10,8 +15,7 @@ export const styles = {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    flexWrap: 'wrap'
+    alignItems: 'center'
   },
   hover: <CSSProperties> {
     display: 'block'

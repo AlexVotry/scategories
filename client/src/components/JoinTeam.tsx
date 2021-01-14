@@ -1,22 +1,27 @@
 // form to join team
 
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import socket from '../service/socketConnection';
+import UserContext from '../contexts/UserContext';
 
 const JoinTeam = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [group, setGroup] = useState('');
   const [admin, setAdmin] = useState(false);
+  const user = useContext(UserContext);
 
   const handleChange = (e) => {
     setAdmin(e.target.checked);
   }
 
   const handleSubmit = (e) => {
-    const formInfo = {name, email, group, admin}
+    e.preventDefault();
+    localStorage.removeItem('userInfo');
+    const formInfo = {name, email, group, admin};
     socket.emit('joinTeam', formInfo);
-    // e.preventDefault();
+    user.update(formInfo);
+    localStorage.setItem('userInfo', JSON.stringify(formInfo));
   }
 
   return (
