@@ -10,20 +10,24 @@ import TeamsContext from '../contexts/TeamsContext';
 import LetterContext from '../contexts/LetterContext';
 import CategoryContext from '../contexts/CategoryContext';
 import TimerContext from '../contexts/TimerContext';
+import GameStateContext from '../contexts/GameStateContext';
+import OtherAnswersContext from '../contexts/OtherAnswersContext';
 
 function WebSocketUtility () {
   // const localState = JSON.parse(localStorage.getItem("userInfo"));
   const localState = {};
   const [teams, setTeams] = useState([]);
+  const [myTeam, setMyTeam] = useState('');
   const [user, setUser] = useState(localState);
   const [gameState, setGameState] = useState('ready');
   const [timer, setTimer] = useState(60);
   const [currentLetter, setCurrentLetter] = useState('');
   const [categories, setCategories] = useState([]);
   // const [otherAnswers, setOtherAnswers] = useState({})
-  const [finalAnswers, setFinalAnswers] = useState([])
+  const [otherAnswers, setOtherAnswers] = useState(new Map())
 
   const update = user => setUser(user);
+  const updateOA = answers => setOtherAnswers(answers);
   // const divvyTeams = teams => this.setState({ teams });
 
   useEffect(() => {
@@ -51,21 +55,21 @@ function WebSocketUtility () {
       const team = !isEmpty(user) ? assignTeam(newTeams, user) : null;
       const newUser = {...user, team };
       setUser(newUser);
+      setMyTeam(team);
     }).emit('myTeam', user.team);
 
     socket.on('gameState', gameState => {
       setGameState(gameState)
-      console.log('gamestate:', gameState)
     });
 
     socket.on('Clock', clock => {
       setTimer(clock);
     });
 
-    socket.on('AllSubmissions', finalAnswers => {
+    socket.on('AllSubmissions', otherAnswers => {
       setGameState('ready');
-      setFinalAnswers(finalAnswers);
-      console.log('finalAnswers', finalAnswers)
+      // setOtherAnswers(otherAnswers);
+      // console.log('otherAnswers', otherAnswers)
     });
 
     // socket.on('updateAnswers', newGuesses => {
@@ -82,7 +86,11 @@ function WebSocketUtility () {
         <CategoryContext.Provider value={categories}>
           <LetterContext.Provider value={currentLetter}>
             <TimerContext.Provider value={timer}>
-              <App gameState={gameState} finalAnswers={finalAnswers}/>
+              <GameStateContext.Provider value={gameState}>
+              <OtherAnswersContext.Provider value={{otherAnswers, updateOA}}>
+                <App myTeam={myTeam}/>
+              </OtherAnswersContext.Provider>
+              </GameStateContext.Provider>
             </TimerContext.Provider>
           </LetterContext.Provider>
         </CategoryContext.Provider>

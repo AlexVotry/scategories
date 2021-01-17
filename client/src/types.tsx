@@ -16,4 +16,17 @@ export interface UpdateContext {
   user: UserType;
   update: (data: object) => void;
 }
+export interface MapType {
+  [data: string]: Map<any, any>;
+}
+
+export interface UAUpdate {
+  userAnswers: Map<any, any>;
+  updateUA: (data: Map<any, any> ) => void;
+}
+
+export interface OAUpdate {
+  otherAnswers: Map<any, any>;
+  updateOA: (data: Map<any, any>) => void;
+}
 

@@ -32,11 +32,11 @@ async function handleGame(io, socket, room, gameState, clock) {
 function runClock(counter, socket, io, room, currState) {
   let state = currState;
   console.log('state:', state);
-  socket.on('pushPause', gameState => {
-    state = gameState;
-    console.log('runclock')
-    return handleGame(io, socket, room, gameState, counter);
-  });
+  // socket.on('pushPause', gameState => {
+  //   state = gameState;
+  //   console.log('runclock')
+  //   return handleGame(io, socket, room, gameState, counter);
+  // });
 
   if (state === 'running') {
     if (counter >= 0) {
@@ -45,9 +45,9 @@ function runClock(counter, socket, io, room, currState) {
       return handleGame(io, socket, room, 'ready', counter);
     }
     counter--;
-    // setTimeout(() => {
-    //   runClock(counter, socket, io, room, state);
-    // }, 1000);
+    setTimeout(() => {
+      runClock(counter, socket, io, room, state);
+    }, 1000);
   } else {
     return;
   }

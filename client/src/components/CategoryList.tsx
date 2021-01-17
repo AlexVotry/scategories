@@ -2,11 +2,13 @@
 
 import React, {useContext} from 'react';
 import CategoryContext from '../contexts/CategoryContext';
+import FinalAnswersContext from '../contexts/FinalAnswersContext';
 import {isEqual, uniqWith} from 'lodash';
 import {colors, styles} from '../cssObjects';
 
-const CategoryList = ({finalAnswers}) => {
+const CategoryList = () => {
   const list = useContext(CategoryContext);
+  const finalAnswers = useContext(FinalAnswersContext);
   let teamAnswers = [];
 
   const parseList = () => {
@@ -14,8 +16,8 @@ const CategoryList = ({finalAnswers}) => {
       return (
         <>
          <li>
-          <div>{category}</div>
-          {showAnswers(index)}
+          <div key={`${index}_${category}`}>{category}</div>
+          {/* {showAnswers(index)} */}
          </li>
         </>
       )
@@ -41,7 +43,7 @@ const CategoryList = ({finalAnswers}) => {
   
   return (
     <ol>
-      {parseList()}
+      {/* {parseList()} */}
     </ol>
   )
 }

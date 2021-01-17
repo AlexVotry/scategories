@@ -12,7 +12,7 @@ import TeamList from './TeamList';
 import UserContext from '../contexts/UserContext';
 import { isEmpty } from 'lodash';
 
-const OpeningPage = ({finalAnswers}) => {
+const OpeningPage = () => {
   const {user} = useContext(UserContext);
 
   const joinTeam = () => {
@@ -36,7 +36,7 @@ const OpeningPage = ({finalAnswers}) => {
   return (
     <div className ="row">
         <Letter/>
-        <CategoryList finalAnswers={finalAnswers}/>
+        <CategoryList/>
         <div className ="col s4">
           {displayName()}
           <Timer/>
