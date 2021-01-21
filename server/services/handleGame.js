@@ -31,7 +31,7 @@ async function handleGame(io, socket, room, gameState, clock) {
 
 function runClock(counter, socket, io, room, currState) {
   let state = currState;
-  console.log('state:', state);
+  // console.log('state:', state);
   // socket.on('pushPause', gameState => {
   //   state = gameState;
   //   console.log('runclock')

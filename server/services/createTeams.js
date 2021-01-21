@@ -67,8 +67,8 @@ async function createMockTeams(players) {
     if (eachUser.length) {
 
       if (unique.length > 2) {
-        eachUser[0].team = 'Purple';
-        teams.Purple.push(...eachUser);
+        eachUser[0].team = 'red';
+        teams.Red.push(...eachUser);
       } else {
         eachUser[0].team = 'Blue';
         teams.Blue.push(...eachUser);

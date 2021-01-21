@@ -30,3 +30,13 @@ export interface OAUpdate {
   updateOA: (data: Map<any, any>) => void;
 }
 
+export interface FAUpdate {
+  otherAnswers: Map<any, any>;
+  updateFA: (data: Map<any, any>) => void;
+}
+
+export interface ScoreUpdate {
+  teamScore: {};
+  updateScore: (data: {}) => void;
+}
+

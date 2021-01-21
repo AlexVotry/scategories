@@ -27,8 +27,8 @@ const {otherAnswers} = useContext(OtherAnswersContext);
     if (gameState === 'ready' && otherAnswers.size) {
       console.log('app gameste:', gameState);
       const final = JSON.stringify(Array.from(otherAnswers.entries()));
-      // const compiledAnswers = userAnswers.concat(otherAnswers);
       socket.emit('FinalAnswer', { team: myTeam, answers: final });
+      otherAnswers.clear();
     }
 
     return <OpeningPage />;

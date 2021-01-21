@@ -9,7 +9,8 @@ const Team = new Schema({
     type: Map,
     of: String
   }],
-  finalAnswers: {type: Map, of: String}
+  finalAnswers: {type: Map, of: String},
+  score: { type: Number, default: 0 }
 });
 
 module.exports = mongoose.model('Team', Team);

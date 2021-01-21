@@ -3,8 +3,9 @@ const mongoose = require('mongoose');
 const { mongoUrl } = require('./secrets');
 
 const handleGame = require('./services/handleGame');
-const {handleAnswers, getFinalAnswers} = require('./services/handleAnswers');
+const { handleAnswers, getFinalAnswers, compareTeamAnswers, updateScores} = require('./services/handleAnswers');
 const {createMockTeams, createTeams } = require('./services/createTeams');
+const {keysIn , isEqual} = require('lodash');
 const uri = mongoUrl;
 
 
@@ -17,12 +18,12 @@ let totalPlayers;
 let totalTeams;
 let counter = 10;
 let myTeam;
-// const answer = [];
+let numOfCategories = 6;
+let teamNames;
+let count = totalPlayers;
 
 function socketMain(io, socket) {
   let room = '';
-
-  socket.emit('teams', teams);
 
   socket.on('joinTeam', async formInfo => {
     const {name, group, admin} = formInfo;
@@ -35,14 +36,20 @@ function socketMain(io, socket) {
   });
 
   socket.on('createTeams', async data => {
-    const newTeams = await createMockTeams(players);
-    totalPlayers = players.length;
+    const newTeams = teams = await createMockTeams(players);
+    totalPlayers = count = players.length;
     totalTeams = Object.keys(newTeams).length;
+    teamNames = keysIn(newTeams);
     io.to(room).emit('newTeams', newTeams);
   });
 
   socket.on('changeGameState', (gameState) => {
     io.to(room).emit('gameState', gameState);
+    if (gameState === 'running') {
+      teamNames.forEach(name => {
+        teams[name].splice(-1, 1, 0);
+      });
+    };
     handleGame(io, socket, room, gameState, counter);
   });
 
@@ -53,31 +60,36 @@ function socketMain(io, socket) {
   });
 
   socket.on('newGuess', newGuesses => {
-    console.log('newGuess:', newGuesses, myTeam);
-    // const { answers, name, team } = newGuesses;
-    io.to(myTeam).emit('updateAnswers', newGuesses);
+    const { guesses, team } = newGuesses;
+    io.to(team).emit('updateAnswers', guesses);
   });
   
   socket.on('newMessage', messages => {
-    io.to(myTeam).emit('updateMessage', messages);
+    io.to(messages.team).emit('updateMessage', messages);
   });
   
-  socket.on('FinalAnswer', async finalAnswers => {
-    let allAnswers;
-    const allTeamAnswers = {}
-    allAnswers = await handleAnswers(finalAnswers, totalPlayers);
-    totalPlayers--;
-    if (!totalPlayers) {
-      const team = await getFinalAnswers(allAnswers);
-      allTeamAnswers[team.name] = team.answers;
-      totalTeams--;
-      console.log('teamAsnwer:', teamAnswers);
-      if (!totalTeams) {
-        // const finalAnswers = await compareTeamAnswers(allTeamAnswers)
-      }
+  socket.on('FinalAnswer', async finalAnswers => {  
+    await handleAnswers(finalAnswers);
+    count--;
+    if (!count) {
+      const teamAnswers = await getFinalAnswers(teamNames);
+      const finalAnswers = await compareTeamAnswers(teamAnswers, numOfCategories)
+      console.log('allsubs');
+      io.to(room).emit('AllSubmissions', finalAnswers);
+      count = totalPlayers;
     }
-    // io.to(room).emit('AllSubmissions', finalAnswers);
-  })
+  });
+
+  socket.on('updateScores', async teamScores => {
+    const { score, team} = teamScores;
+    const currentTeam = teams[team];
+    const currentScore = currentTeam.slice(-1)[0];
+    
+    if ( currentScore !== score) {
+      currentTeam.splice(-1, 1, score);
+      await updateScores(teamScores);
+    } 
+  });
 }
 
 

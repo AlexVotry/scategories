@@ -23,7 +23,6 @@ const OthersGameSheet = (props) => {
   }
 
   const listForm = () => {
-    console.log('final:', otherAnswers, guesses);
     return list.map((category, index) => {
       const guess = guesses.has(index) ? guesses.get(index) : '';
       return (
@@ -44,7 +43,7 @@ const OthersGameSheet = (props) => {
 
   useEffect(() => {
     socket.on('updateAnswers', newGuesses => {
-      // console.log('newGuesses:', newGuesses)
+      console.log('newGuesses:', newGuesses)
       const { answers, name } = newGuesses;
       
       if (name === props.name) {

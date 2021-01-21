@@ -1,10 +1,10 @@
-// export const categoryList = [
-//   '3-letter Words',
-//   '5-letter Words',
-//   'A bird',
-//   'A boy’s name',
-//   'A drink',
-//   'A fish',
+export const categoryList = [
+  '3-letter Words',
+  '5-letter Words',
+  'A bird',
+  'A boy’s name',
+  'A drink',
+  'A fish',
 //   'A girl’s name',
 //   'A relative',
 //   'A river',
@@ -326,4 +326,12 @@
 //   'Words With Double Letters',
 //   'World leaders/Politicians',
 //   'Zoo Animals'
-// ]
+]
+
+const blueArray = '[["00","!Cleveland"],["01","Careau"],["02","!Catcup"],["03","!cat"],["05","catch"],["04","!Cassidy"]]';
+const redArray = '[["00","!Cleveland"],["01","help"],["02","!Catcup"],["03","!cat"],["05","evergreens"],["04","!Cassidy"]]';
+
+export const teamAnswer = {
+  Red: new Map(JSON.parse(blueArray)), 
+  Blue: new Map(JSON.parse(redArray))
+}

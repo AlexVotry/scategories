@@ -28,7 +28,7 @@ const JoinTeam = () => {
     <div className="row">
 
       <form className="col s12" onSubmit={handleSubmit}>
-        <div className="input-field col s6">
+        <div className="input-field col s12">
           <input id="group"
             type="text"
             value={group}
@@ -37,7 +37,7 @@ const JoinTeam = () => {
         </div>
 
         <div className="row">
-          <div className="input-field col s6">
+          <div className="input-field col s12">
             <input id="first_name" 
               type="text"
               value={name}
@@ -47,7 +47,7 @@ const JoinTeam = () => {
         </div>
 
         <div className="row">
-          <div className="input-field col s6">
+          <div className="input-field col s12">
             <input id="email" 
               type="email"
               value={email}

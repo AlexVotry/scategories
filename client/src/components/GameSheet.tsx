@@ -46,13 +46,13 @@ const GameSheet = () => {
     if (answers.has(index)) answers.delete(index);
     setAnswers(new Map(answers.set(index, val)));
     const guesses = { answers: [`${pad(index)}_${name}`, val], name };
-    socket.emit('newGuess', guesses);
+    socket.emit('newGuess', {guesses, team});
   }
 
 
   const updateMessage = e => {
     e.preventDefault();
-    socket.emit('newMessage', {message, name});
+    socket.emit('newMessage', {message, name, team});
     setMessage('');
   }
 
