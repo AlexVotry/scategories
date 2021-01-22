@@ -8,7 +8,6 @@ const {createMockTeams, createTeams } = require('./services/createTeams');
 const {keysIn , isEqual} = require('lodash');
 const uri = mongoUrl;
 
-
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 
 const db = require('./models');
@@ -16,7 +15,7 @@ let teams = {};
 const players = [];
 let totalPlayers;
 let totalTeams;
-let counter = 10;
+let counter = 30;
 let myTeam;
 let numOfCategories = 6;
 let teamNames;
@@ -74,7 +73,6 @@ function socketMain(io, socket) {
     if (!count) {
       const teamAnswers = await getFinalAnswers(teamNames);
       const finalAnswers = await compareTeamAnswers(teamAnswers, numOfCategories)
-      console.log('allsubs');
       io.to(room).emit('AllSubmissions', finalAnswers);
       count = totalPlayers;
     }
@@ -91,7 +89,6 @@ function socketMain(io, socket) {
     } 
   });
 }
-
 
 const addUserToGroup = async user => {
   await db.User.findOneAndUpdate(

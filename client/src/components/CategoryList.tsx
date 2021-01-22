@@ -61,7 +61,6 @@ const CategoryList = () => {
   const showTeamTotals = () => {
     if (!isEqual(teamTotals, score)) {
       setScore(teamTotals);
-
     }
     return teamAnswers.map(team => {
       const currentScore = teamTotals[team] || 0;
@@ -75,8 +74,9 @@ const CategoryList = () => {
   }
   useEffect(() => {
     if (isEmpty(teamTotals)) return;
-    console.log('useEffect', { score: teamTotals[user.team], team: user.team })
-    socket.emit('updateScores', { score: teamTotals[user.team], team: user.team }); 
+    const teamScore = ((teamTotals[user.team] || 0) + finalAnswers[user.team].score)
+    console.log('useEffect', { score: teamScore, team: user.team })
+    socket.emit('updateScores', { score: teamScore, team: user.team }); 
   }, [score]);
   
 

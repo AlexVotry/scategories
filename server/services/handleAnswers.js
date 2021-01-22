@@ -117,12 +117,12 @@ const updateScores = async scores => {
   const { score, team } = scores;
   await db.Team.findOneAndUpdate(
     { name: team },
-    { $inc : { score } },
+    { score },
     { upsert: true },
     (err, doc) => {
       if (err) throw err;
     }
-    )
+  )
 }
 
 function getAnswers() {
