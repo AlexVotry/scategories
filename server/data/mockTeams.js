@@ -1,13 +1,13 @@
 const mockTeams = { 
   Blue: [
     { name: "Trudy", email: '', team: 'Blue', admin: false, group: 'family' },
-    { name: "Sam", email: '', team: 'Blue', admin: false, group: 'family' },
-    { name: "Carrol", email: '', team: 'Blue', admin: false, group: 'family' }
+    // { name: "Sam", email: '', team: 'Blue', admin: false, group: 'family' },
+    // { name: "Carrol", email: '', team: 'Blue', admin: false, group: 'family' }
   ], 
   Red: [
     { name: "Hank", email: '', team: 'Red', admin: false, group: 'family' },
-    { name: "Fred", email: '', team: 'Red', admin: false, group: 'family' },
-    { name: "Julie", email: '', team: 'Red', admin: false, group: 'family' }
+    // { name: "Fred", email: '', team: 'Red', admin: false, group: 'family' },
+    // { name: "Julie", email: '', team: 'Red', admin: false, group: 'family' }
   ], 
   Green: [
     { name: "Tammi", email: '', team: 'Green', admin: false, group: 'family' },

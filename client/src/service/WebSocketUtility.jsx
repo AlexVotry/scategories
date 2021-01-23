@@ -1,6 +1,5 @@
 import React, {useState, useContext, useEffect } from 'react';
 import socket from './socketConnection';
-// import io from 'socket.io-client';
 import { find, remove, isEqual, isEmpty, set } from 'lodash';
 import { assignTeam } from '../service/parseTeams';
 
@@ -10,37 +9,38 @@ import TeamsContext from '../contexts/TeamsContext';
 import LetterContext from '../contexts/LetterContext';
 import CategoryContext from '../contexts/CategoryContext';
 import TimerContext from '../contexts/TimerContext';
+import GameStateContext from '../contexts/GameStateContext';
+import UserAnswersContext from '../contexts/UserAnswersContext';
+import FinalAnswersContext from '../contexts/FinalAnswersContext';
+// import TeamScoreContext from '../contexts/TeamScoreContext';
 
 function WebSocketUtility () {
   // const localState = JSON.parse(localStorage.getItem("userInfo"));
   const localState = {};
   const [teams, setTeams] = useState([]);
+  const [myTeam, setMyTeam] = useState('');
   const [user, setUser] = useState(localState);
   const [gameState, setGameState] = useState('ready');
   const [timer, setTimer] = useState(60);
   const [currentLetter, setCurrentLetter] = useState('');
   const [categories, setCategories] = useState([]);
-  // const [otherAnswers, setOtherAnswers] = useState({})
-  const [finalAnswers, setFinalAnswers] = useState([])
+  const [finalAnswers, setFinalAnswers] = useState({})
+  const [userAnswers, setUserAnswers] = useState(new Map())
+  const [finalSubmited, setFinalSubmited] = useState(false);
+  // const [teamScore, setTeamScore] = useState({});
 
   const update = user => setUser(user);
+  const updateUA = answers => setUserAnswers(answers);
+  // const updateScore = teamScore => setTeamScore(teamScore);
   // const divvyTeams = teams => this.setState({ teams });
 
   useEffect(() => {
     initialize();
-    updateUser();
-    // updateTeams();
-  }, [user, teams, gameState]);
-
-  const updateUser = () => {
-    socket.on('currentUser', user => setUser(user));
-  }
-
-  // const updateTeams = () => {
-  //   socket.on('currentUser', user => setUser(user));
-  // }
+  }, [user, teams]);
 
   const initialize = () => {
+    socket.on('currentUser', user => setUser(user));
+
     socket.on('newGame', gameInfo => {
       setCategories(gameInfo.categories);
       setCurrentLetter(gameInfo.currentLetter);
@@ -51,29 +51,35 @@ function WebSocketUtility () {
       const team = !isEmpty(user) ? assignTeam(newTeams, user) : null;
       const newUser = {...user, team };
       setUser(newUser);
+      setMyTeam(team);
     }).emit('myTeam', user.team);
 
     socket.on('gameState', gameState => {
       setGameState(gameState)
-      console.log('gamestate:', gameState)
+      if (gameState === 'running');
     });
 
     socket.on('Clock', clock => {
       setTimer(clock);
     });
+    if (!finalSubmited) {
+      setFinalSubmited(true);
+      socket.on('AllSubmissions', finalSubmissions => {
+        const teamArray = Object.keys(finalSubmissions);
+        setGameState('ready');
+        
+        teamArray.forEach(team => {
+          const teamAnswers = finalSubmissions[team].answers;
+          
+          if (typeof teamAnswers === 'string') {
+            finalSubmissions[team].answers = new Map(JSON.parse(finalSubmissions[team].answers));
+          }
+        })
+        setFinalAnswers(finalSubmissions);
+        console.log('finalSubmissions', finalSubmissions)
+      });
+    }
 
-    socket.on('AllSubmissions', finalAnswers => {
-      setGameState('ready');
-      setFinalAnswers(finalAnswers);
-      console.log('finalAnswers', finalAnswers)
-    });
-
-    // socket.on('updateAnswers', newGuesses => {
-    //   const { answers, name } = newGuesses;
-    //   console.log('newGuess:', answers)
-    //   setOtherAnswers(answers);
-    //   // if (name === props.name) setGuesses(answers);
-    // })
   }
 
   return (
@@ -82,7 +88,13 @@ function WebSocketUtility () {
         <CategoryContext.Provider value={categories}>
           <LetterContext.Provider value={currentLetter}>
             <TimerContext.Provider value={timer}>
-              <App gameState={gameState} finalAnswers={finalAnswers}/>
+              <GameStateContext.Provider value={gameState}>
+              <FinalAnswersContext.Provider value={finalAnswers}>
+                <UserAnswersContext.Provider value = {{ userAnswers, updateUA }}>
+                  <App myTeam={myTeam}/>
+                </UserAnswersContext.Provider>
+              </FinalAnswersContext.Provider>
+              </GameStateContext.Provider>
             </TimerContext.Provider>
           </LetterContext.Provider>
         </CategoryContext.Provider>

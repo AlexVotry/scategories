@@ -22,7 +22,7 @@ async function handleGame(io, socket, room, gameState, clock) {
     const categories = catArr[0];
     const gameInfo = { currentLetter, categories};
     io.to(room).emit('newGame', gameInfo);
-    counter = await runClock(counter, socket, io, room, gameState);
+    // counter = await runClock(counter, socket, io, room, gameState);
   } else {
     counter = clock;
     io.to(room).emit('gameState', gameState);
@@ -31,12 +31,12 @@ async function handleGame(io, socket, room, gameState, clock) {
 
 function runClock(counter, socket, io, room, currState) {
   let state = currState;
-  console.log('state:', state);
-  socket.on('pushPause', gameState => {
-    state = gameState;
-    console.log('runclock')
-    return handleGame(io, socket, room, gameState, counter);
-  });
+  // console.log('state:', state);
+  // socket.on('pushPause', gameState => {
+  //   state = gameState;
+  //   console.log('runclock')
+  //   return handleGame(io, socket, room, gameState, counter);
+  // });
 
   if (state === 'running') {
     if (counter >= 0) {
@@ -45,9 +45,9 @@ function runClock(counter, socket, io, room, currState) {
       return handleGame(io, socket, room, 'ready', counter);
     }
     counter--;
-    // setTimeout(() => {
-    //   runClock(counter, socket, io, room, state);
-    // }, 1000);
+    setTimeout(() => {
+      runClock(counter, socket, io, room, state);
+    }, 1000);
   } else {
     return;
   }

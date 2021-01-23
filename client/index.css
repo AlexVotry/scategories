@@ -4,3 +4,8 @@
   width: 98%;
   margin: 10px;
 }
+
+ol {
+  margin: 0;
+  padding: 0;
+}

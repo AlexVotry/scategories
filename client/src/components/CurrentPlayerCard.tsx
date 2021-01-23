@@ -14,22 +14,23 @@ const CurrentPlayerCard = () => {
   const teams = useContext(TeamsContext);
   const cardStyle = {
     backgroundColor: colors[user.team],
-    color: colors.White
+    color: colors.White,
+    marginRight: '10px',
+    width: '40%',
+    padding: '10px'
   }
   const team = teams[user.team];
 
   return (
         <div  style={cardStyle} >
-          <div className="cardContent" >
-            <div style={styles.flexRow}>
-              <div>TEAM {user.team}</div>
-              player: {user.name}
-              <Letter />
-              <Timer />
-            </div>
-            <GameSheet />
-            <ControlButtons />
+          <div style={styles.flexRow}>
+            <div>TEAM {user.team}</div>
+            player: {user.name}
+            <Letter />
+            <Timer />
           </div>
+          <GameSheet />
+          <ControlButtons />
         </div>
   )
 }
