@@ -17,7 +17,8 @@ const OtherPlayersCard = () => {
   const cardStyle = {
     ...styles.flexRow,
     backgroundColor: colors[user.team],
-    color: colors.White
+    color: colors.White,
+    width: '20%'
   }
   const team = teams[user.team];
   const others = findOthers(team, user);

@@ -15,7 +15,7 @@ let teams = {};
 const players = [];
 let totalPlayers;
 let totalTeams;
-let counter = 30;
+let counter = 20;
 let myTeam;
 let numOfCategories = 6;
 let teamNames;

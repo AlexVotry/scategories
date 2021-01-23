@@ -5,6 +5,7 @@ import CategoryContext from '../contexts/CategoryContext';
 import FinalAnswersContext from '../contexts/FinalAnswersContext';
 import UserContext from '../contexts/UserContext';
 import socket from '../service/socketConnection';
+import {pad} from '../service/strings';
 import {colors, styles} from '../cssObjects';
 import { isEmpty, isEqual } from 'lodash';
 import { teamAnswer, categoryList } from '../data/categoryList.js';
@@ -20,12 +21,11 @@ const CategoryList = () => {
   const teamTotals = {};
 
   const parseList = () => {
-    console.log('parse');
     return list.map((category, index) => {
       const i = pad(index);
       return (
         <li key={`${index}`}>
-          <div >{category}</div>
+          <div >{category} {index}</div>
         {showAnswers(index)}
         </li>
       )
@@ -39,7 +39,7 @@ const CategoryList = () => {
       const newMap = finalAnswers[team].answers;
       let answer = newMap.has(index) ? newMap.get(index) : '';
       answer = displayAnswer(answer, team);
-      return <span key={`${team}_${answer}_${index}`} style={{color: colors[team]}}> -- {answer}</span>
+      return <span key={`${team}_${index}`} style={{color: colors[team]}}> -- {answer}</span>
     })
   }
 
@@ -66,23 +66,15 @@ const CategoryList = () => {
       const currentScore = teamTotals[team] || 0;
       const total = finalAnswers[team].score + (currentScore);
       return (
-        <>
           <div key={team}>{team}  currentScore: { currentScore } TotalScore:{ total }</div>
-        </>
       )
     });
   }
   useEffect(() => {
     if (isEmpty(teamTotals)) return;
     const teamScore = ((teamTotals[user.team] || 0) + finalAnswers[user.team].score)
-    console.log('useEffect', { score: teamScore, team: user.team })
     socket.emit('updateScores', { score: teamScore, team: user.team }); 
   }, [score]);
-  
-
-  function pad(d) {
-    return (d < 10) ? '0' + d.toString() : d.toString();
-  }
   
   return (
     <>

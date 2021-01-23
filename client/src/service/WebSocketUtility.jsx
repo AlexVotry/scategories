@@ -10,7 +10,7 @@ import LetterContext from '../contexts/LetterContext';
 import CategoryContext from '../contexts/CategoryContext';
 import TimerContext from '../contexts/TimerContext';
 import GameStateContext from '../contexts/GameStateContext';
-import OtherAnswersContext from '../contexts/OtherAnswersContext';
+import UserAnswersContext from '../contexts/UserAnswersContext';
 import FinalAnswersContext from '../contexts/FinalAnswersContext';
 // import TeamScoreContext from '../contexts/TeamScoreContext';
 
@@ -25,13 +25,13 @@ function WebSocketUtility () {
   const [currentLetter, setCurrentLetter] = useState('');
   const [categories, setCategories] = useState([]);
   const [finalAnswers, setFinalAnswers] = useState({})
-  const [otherAnswers, setOtherAnswers] = useState(new Map())
+  const [userAnswers, setUserAnswers] = useState(new Map())
   const [finalSubmited, setFinalSubmited] = useState(false);
-  const [teamScore, setTeamScore] = useState({});
+  // const [teamScore, setTeamScore] = useState({});
 
   const update = user => setUser(user);
-  const updateOA = answers => setOtherAnswers(answers);
-  const updateScore = teamScore => setTeamScore(teamScore);
+  const updateUA = answers => setUserAnswers(answers);
+  // const updateScore = teamScore => setTeamScore(teamScore);
   // const divvyTeams = teams => this.setState({ teams });
 
   useEffect(() => {
@@ -48,7 +48,6 @@ function WebSocketUtility () {
 
     socket.on('newTeams', newTeams => {
       setTeams(newTeams);
-      console.log('newTeams:', teams);
       const team = !isEmpty(user) ? assignTeam(newTeams, user) : null;
       const newUser = {...user, team };
       setUser(newUser);
@@ -57,7 +56,6 @@ function WebSocketUtility () {
 
     socket.on('gameState', gameState => {
       setGameState(gameState)
-      console.log('gamesstate:', gameState);
       if (gameState === 'running');
     });
 
@@ -67,7 +65,6 @@ function WebSocketUtility () {
     if (!finalSubmited) {
       setFinalSubmited(true);
       socket.on('AllSubmissions', finalSubmissions => {
-        console.log('sub:', timer, finalSubmited)
         const teamArray = Object.keys(finalSubmissions);
         setGameState('ready');
         
@@ -93,11 +90,9 @@ function WebSocketUtility () {
             <TimerContext.Provider value={timer}>
               <GameStateContext.Provider value={gameState}>
               <FinalAnswersContext.Provider value={finalAnswers}>
-                {/* <TeamScoreContext.Provider value = {{ teamScore, updateScore }}> */}
-                <OtherAnswersContext.Provider value={{ otherAnswers, updateOA }}>
+                <UserAnswersContext.Provider value = {{ userAnswers, updateUA }}>
                   <App myTeam={myTeam}/>
-                </OtherAnswersContext.Provider>
-                {/* </TeamScoreContext.Provider> */}
+                </UserAnswersContext.Provider>
               </FinalAnswersContext.Provider>
               </GameStateContext.Provider>
             </TimerContext.Provider>

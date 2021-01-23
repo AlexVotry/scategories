@@ -2,63 +2,86 @@
 
 import React, { useContext, useState, useEffect } from 'react';
 import CategoryContext from '../contexts/CategoryContext';
-import OtherAnswersContext from '../contexts/OtherAnswersContext';
-// import FinalAnswersContext from '../contexts/FinalAnswersContext';
-import GameStateContext from '../contexts/GameStateContext';
+import UserAnswersContext from '../contexts/UserAnswersContext';
+import UserContext from '../contexts/UserContext';
 import socket from '../service/socketConnection';
+import {pad} from '../service/strings';
 import {colors} from '../cssObjects';
 
 const OthersGameSheet = (props) => {
   const list = useContext(CategoryContext);
-  const gameState = useContext(GameStateContext);
-  const otherAnswers = useContext(OtherAnswersContext);
-  // const otherAnswers = useContext(OtherAnswersContext);
+  const userAnswers = useContext(UserAnswersContext);
+  const {user} = useContext(UserContext);
   const [guesses, setGuesses] = useState(new Map());
   const [messages, setMessages] = useState([]);
-  const otherMessages = [];
   const answerStle = {
     backgroundColor: colors.White,
     color: colors.Red,
     width: "100%"
   }
 
+  const handleChange = (e) => {
+    const userAnswer = e.target.value;
+    const temp = userAnswer.split('_');
+    updateUserAnswers(temp[0], temp[1]);
+  }
+
   const listForm = () => {
     return list.map((category, index) => {
       const guess = guesses.has(index) ? guesses.get(index) : '';
+      
       return (
         <li key={index}>
-          <div style={answerStle}>{guess} </div>
+          {displayGuess(guess, index)}
         </li>
       )
     })
   }
+  
+  const displayGuess = (guess, index) => {
+    if (!guess) return;
+    const label = index.toString();
+    return (
+      <>
+        <input className="with-gap" style={answerStle} name={guess} value={`${index}_${guess}`} type="checkbox" id={label} onChange={handleChange} />
+        <label htmlFor={label}>{guess}</label>
+      </>
+    )
+  }
 
   const showMessages = () => {
-    // console.log(messages, 'showMessages')
     if (!messages.length) return;
     return messages.map((message, index) => {
       return <div key={`${props.name}_${index}`}>{message}</div>
     });
   }
 
+  const updateUserAnswers = (i, value) => {
+    const index = pad(i);
+    const temp = userAnswers.userAnswers;
+    if (temp.has(index)) temp.delete(index);
+    temp.set(index, value);
+    userAnswers.updateUA(temp);
+  }
+
+  const updateOtherAnswers = (index, value) => {
+    if (guesses.has(index)) guesses.delete(index);
+    setGuesses(new Map(guesses.set(index, value)));
+  }
+  
   useEffect(() => {
     socket.on('updateAnswers', newGuesses => {
-      console.log('newGuesses:', newGuesses)
       const { answers, name } = newGuesses;
+      const index = answers[0];
+      const value = answers[1];
+      const i = parseInt(index.substring(0, 2));
       
       if (name === props.name) {
-        const index = answers[0];
-        const i = parseInt(index.substring(0,1));
-        const value = answers[1];
-       
-        if (guesses.has(i)) guesses.delete(i);
-
-        setGuesses(new Map(guesses.set(i, value)));
-        const temp = otherAnswers.otherAnswers;
-        if (temp.has(index)) temp.delete(index);
-        temp.set(index, value);
-        otherAnswers.updateOA(temp)
+        updateOtherAnswers(i, value);
+      } else if (name === user.name) {
+        updateUserAnswers(i, value);
       }
+
     })
 
     socket.on('updateMessage', newMessages => {
