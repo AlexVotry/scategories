@@ -20,7 +20,6 @@ const OpeningPage = () => {
     return <JoinTeam/>
   }
 
-
   const displayName = () => {
     if (isEmpty(user)) return null;
     const name = user.name ? `Player: ${user.name}` : '';
@@ -37,7 +36,7 @@ const OpeningPage = () => {
     <div className ="row">
         <Letter/>
         <CategoryList/>
-        <div className ="col s4">
+        <div>
           {displayName()}
           <Timer/>
           <ControlButtons/>

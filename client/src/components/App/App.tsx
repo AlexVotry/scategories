@@ -16,7 +16,7 @@ const {userAnswers} = useContext(UserAnswersContext);
   const showCorrectPage = () => {
     if (gameState === 'running') {
       return (
-        <div style={styles.flexRow}>
+        <div style={styles.flexPlayers}>
             <CurrentPlayerCard />
             <OtherPlayersCard />
         </div>

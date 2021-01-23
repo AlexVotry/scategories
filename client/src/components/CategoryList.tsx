@@ -11,8 +11,8 @@ import { isEmpty, isEqual } from 'lodash';
 import { teamAnswer, categoryList } from '../data/categoryList.js';
 
 const CategoryList = () => {
-  // const list = categoryList;
-  // const finalAnswers = teamAnswer;
+  // const list = categoryList;  //mock data
+  // const finalAnswers = teamAnswer; //mock data
   const list = useContext(CategoryContext);
   const finalAnswers = useContext(FinalAnswersContext);
   const {user} = useContext(UserContext);
@@ -77,12 +77,12 @@ const CategoryList = () => {
   }, [score]);
   
   return (
-    <>
-    <ol>
-      {parseList()}
-    </ol>
+    <div>
+      <ol>
+        {parseList()}
+      </ol>
       {showTeamTotals()}
-    </>
+    </div>
   )
 }
 

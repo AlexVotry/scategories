@@ -14,7 +14,7 @@ const OthersGameSheet = (props) => {
   const {user} = useContext(UserContext);
   const [guesses, setGuesses] = useState(new Map());
   const [messages, setMessages] = useState([]);
-  const answerStle = {
+  const answerStyle = {
     backgroundColor: colors.White,
     color: colors.Red,
     width: "100%"
@@ -43,7 +43,7 @@ const OthersGameSheet = (props) => {
     const label = index.toString();
     return (
       <>
-        <input className="with-gap" style={answerStle} name={guess} value={`${index}_${guess}`} type="checkbox" id={label} onChange={handleChange} />
+        <input className="with-gap" style={answerStyle} name={guess} value={`${index}_${guess}`} type="checkbox" id={label} onChange={handleChange} />
         <label htmlFor={label}>{guess}</label>
       </>
     )
@@ -95,14 +95,13 @@ const OthersGameSheet = (props) => {
 
   return (
     <>
-      <div className="row">
-        <ol className="col s4">
-          {listForm()}
-        </ol>
+      <ol>
+        {listForm()}
+      </ol>
+
+      <div>
+        {showMessages()}
       </div>
-        <div>
-          {showMessages()}
-        </div>
     </>
   )
 };

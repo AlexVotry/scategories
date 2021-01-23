@@ -37,7 +37,7 @@ const GameSheet = () => {
   const listForm = () => {
     return list.map((category, index) => {
       return (
-        <li key={category} style={styles.flexRow}>
+        <li key={category} >
           {category}
           <div className="input-field inline">
             <input
@@ -65,8 +65,7 @@ const GameSheet = () => {
 
       <form onSubmit={handleSubmit}>
         <div className="row">
-          <ol className="col s4">
-            <input type="submit" value="Submit" />
+          <ol>
             {listForm()}
           </ol>
         </div>

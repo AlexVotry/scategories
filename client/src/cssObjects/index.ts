@@ -14,7 +14,11 @@ export const styles = {
   flexRow: <CSSProperties> {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
+  },
+  flexPlayers: <CSSProperties> {
+    display: 'flex',
+    flexDirection: 'row',
     alignItems: 'center'
   },
   hover: <CSSProperties> {

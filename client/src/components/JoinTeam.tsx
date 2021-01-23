@@ -27,7 +27,7 @@ const JoinTeam = () => {
   return (
     <div className="row">
 
-      <form className="col s12" onSubmit={handleSubmit}>
+      <form className="col s6" onSubmit={handleSubmit}>
         <div className="input-field col s12">
           <input id="group"
             type="text"
