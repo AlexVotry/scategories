@@ -13,7 +13,8 @@ const OthersGameSheet = (props) => {
   const userAnswers = useContext(UserAnswersContext);
   const {user} = useContext(UserContext);
   const [guesses, setGuesses] = useState(new Map());
-  const [messages, setMessages] = useState([]);
+  const [isChecked, setIsChecked] = useState({})
+ 
   const answerStyle = {
     backgroundColor: colors.White,
     color: colors.Red,
@@ -23,7 +24,12 @@ const OthersGameSheet = (props) => {
   const handleChange = (e) => {
     const userAnswer = e.target.value;
     const temp = userAnswer.split('_');
-    updateUserAnswers(temp[0], temp[1]);
+    const checked = {...isChecked, [temp[0]]: e.target.checked};
+    setIsChecked(() => (checked));
+    if (e.target.checked) {
+      updateUserAnswers(temp[0], temp[1]);
+    } 
+    console.log('ishandled:', isChecked);
   }
 
   const listForm = () => {
@@ -31,7 +37,7 @@ const OthersGameSheet = (props) => {
       const guess = guesses.has(index) ? guesses.get(index) : '';
       
       return (
-        <li key={index}>
+        <li className="otherGameSheetListItem" key={index}>
           {displayGuess(guess, index)}
         </li>
       )
@@ -41,19 +47,14 @@ const OthersGameSheet = (props) => {
   const displayGuess = (guess, index) => {
     if (!guess) return;
     const label = index.toString();
+    console.log('ischecked:', isChecked)
+    const highlight = isChecked[index] ? { color: 'white'} : {};
     return (
       <>
-        <input className="with-gap" style={answerStyle} name={guess} value={`${index}_${guess}`} type="checkbox" id={label} onChange={handleChange} />
-        <label htmlFor={label}>{guess}</label>
+        <input className="with-gap" style={answerStyle} name={guess} value={`${index}_${guess}`} type="checkbox" id={label} onChange={e => handleChange(e)} />
+        <label style={highlight} htmlFor={label}>{guess}</label>
       </>
     )
-  }
-
-  const showMessages = () => {
-    if (!messages.length) return;
-    return messages.map((message, index) => {
-      return <div key={`${props.name}_${index}`}>{message}</div>
-    });
   }
 
   const updateUserAnswers = (i, value) => {
@@ -81,28 +82,13 @@ const OthersGameSheet = (props) => {
       } else if (name === user.name) {
         updateUserAnswers(i, value);
       }
-
     })
-
-    socket.on('updateMessage', newMessages => {
-      const { message, name } = newMessages;
-
-      if (name === props.name) {
-        setMessages(arr => [...arr, message]);
-      }
-    });
   }, [])
 
   return (
-    <>
-      <ol>
-        {listForm()}
-      </ol>
-
-      <div>
-        {showMessages()}
-      </div>
-    </>
+    <ol className="gameSheet">
+      {listForm()}
+    </ol>
   )
 };
 

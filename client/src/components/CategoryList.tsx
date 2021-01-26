@@ -24,7 +24,7 @@ const CategoryList = () => {
     return list.map((category, index) => {
       const i = pad(index);
       return (
-        <li key={`${index}`}>
+        <li className="categroyListItems" key={`${index}`}>
           <div >{category} {index}</div>
         {showAnswers(index)}
         </li>
@@ -39,7 +39,7 @@ const CategoryList = () => {
       const newMap = finalAnswers[team].answers;
       let answer = newMap.has(index) ? newMap.get(index) : '';
       answer = displayAnswer(answer, team);
-      return <span key={`${team}_${index}`} style={{color: colors[team]}}> -- {answer}</span>
+      return <span className="teamAnswers" key={`${team}_${index}`} style={{color: colors[team]}}> -- {answer}</span>
     })
   }
 
@@ -66,7 +66,7 @@ const CategoryList = () => {
       const currentScore = teamTotals[team] || 0;
       const total = finalAnswers[team].score + (currentScore);
       return (
-          <div key={team}>{team}  currentScore: { currentScore } TotalScore:{ total }</div>
+          <div className="teamTotals" key={team}>{team}  currentScore: { currentScore } TotalScore:{ total }</div>
       )
     });
   }
@@ -77,7 +77,7 @@ const CategoryList = () => {
   }, [score]);
   
   return (
-    <div>
+    <div className="categoryList">
       <ol>
         {parseList()}
       </ol>

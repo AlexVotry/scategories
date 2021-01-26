@@ -3,6 +3,7 @@ import React, {useContext, useState} from 'react';
 import OpeningPage from '../OpeningPage';
 import CurrentPlayerCard from '../CurrentPlayerCard';
 import OtherPlayersCard from '../OtherPlayersCard';
+import GameHeader from '../GameHeader';
 import UserAnswersContext from '../../contexts/UserAnswersContext';
 import GameStateContext from '../../contexts/GameStateContext';
 
@@ -16,9 +17,12 @@ const {userAnswers} = useContext(UserAnswersContext);
   const showCorrectPage = () => {
     if (gameState === 'running') {
       return (
-        <div style={styles.flexPlayers}>
-            <CurrentPlayerCard />
-            <OtherPlayersCard />
+        <div className="app" style={styles.flexColumn}>
+          <GameHeader />
+          <div className="appDisplayCards" style={styles.flexPlayers}>
+              <CurrentPlayerCard />
+              <OtherPlayersCard />
+          </div>
         </div>
       );
     } 

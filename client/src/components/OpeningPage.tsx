@@ -2,7 +2,7 @@
 
 import React, { useContext } from 'react';
 
-import Letter from './Letter';
+import Letter from './Letter/Letter';
 import CategoryList from './CategoryList';
 import Timer from './Timer';
 import ControlButtons from './ControlButtons';
@@ -33,12 +33,11 @@ const OpeningPage = () => {
   }
   
   return (
-    <div className ="row">
+    <div className ="OpeningPage">
         <Letter/>
         <CategoryList/>
         <div>
           {displayName()}
-          <Timer/>
           <ControlButtons/>
           <TeamList/>
           {joinTeam()}

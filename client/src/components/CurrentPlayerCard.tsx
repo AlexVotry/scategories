@@ -3,7 +3,7 @@
 import React, { useContext } from 'react';
 import GameSheet from './GameSheet';
 import Timer from './Timer';
-import Letter from './Letter';
+import Letter from './Letter/Letter';
 import ControlButtons from './ControlButtons';
 import UserContext from '../contexts/UserContext';
 import TeamsContext from '../contexts/TeamsContext';
@@ -16,22 +16,17 @@ const CurrentPlayerCard = () => {
     backgroundColor: colors[user.team],
     color: colors.White,
     marginRight: '10px',
-    width: '40%',
     padding: '10px'
   }
   const team = teams[user.team];
 
   return (
-        <div  style={cardStyle} >
-          <div style={styles.flexRow}>
-            <div>TEAM {user.team}</div>
-            player: {user.name}
-            <Letter />
-            <Timer />
-          </div>
-          <GameSheet />
-          <ControlButtons />
-        </div>
+    <div className="currentPlayerCard" style={styles.flexColumn}>
+      <div className="gameCard" style={cardStyle} >
+        <GameSheet />
+      </div>
+      <ControlButtons />
+    </div>
   )
 }
 

@@ -49,8 +49,6 @@ async function createTeams(players) {
 
 async function createMockTeams(players) {
   let teams = mockTeams;
-  console.log('blue:', teams.Blue)
-  teams.Blue = [];
   const unique = uniqBy(players, 'name');
   const len = unique.length;
   let noOfTeams = 0;

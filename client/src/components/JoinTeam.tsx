@@ -9,6 +9,9 @@ const JoinTeam = () => {
   const [email, setEmail] = useState('');
   const [group, setGroup] = useState('');
   const [admin, setAdmin] = useState(false);
+  const [gActive, setGActive] = useState('');
+  const [nActive, setNActive] = useState('');
+  const [eActive, setEActive] = useState('');
   const user = useContext(UserContext);
 
   const handleChange = (e) => {
@@ -24,16 +27,25 @@ const JoinTeam = () => {
     localStorage.setItem('userInfo', JSON.stringify(formInfo));
   }
 
-  return (
-    <div className="row">
+  const checkPlaceholder = () => {
+    console.log('go:', group);
+    if (!group) setGActive('');
+    if (!name) setNActive('');
+    if (!email) setEActive('');
+  }
 
-      <form className="col s6" onSubmit={handleSubmit}>
+  return (
+    <div className="row joinTeam">
+
+      <form className="col s5" onSubmit={handleSubmit}>
         <div className="input-field col s12">
           <input id="group"
             type="text"
             value={group}
+            onFocus={() => setGActive('active')}
+            onBlur={checkPlaceholder}
             onChange={e => setGroup(e.target.value)} />
-          <label htmlFor="group">Group Name</label>
+          <label className={gActive} htmlFor="group">Group Name</label>
         </div>
 
         <div className="row">
@@ -41,8 +53,10 @@ const JoinTeam = () => {
             <input id="first_name" 
               type="text"
               value={name}
+              onFocus={() => setNActive('active')}
+              onBlur={checkPlaceholder}
               onChange={e => setName(e.target.value)}/>
-            <label htmlFor="first_name">First Name</label>
+            <label className={nActive} htmlFor="first_name">First Name</label>
           </div>
         </div>
 
@@ -51,8 +65,10 @@ const JoinTeam = () => {
             <input id="email" 
               type="email"
               value={email}
+              onFocus={() => setEActive('active')}
+              onBlur={checkPlaceholder}
               onChange={e => setEmail(e.target.value)}/>
-            <label htmlFor="email">Email</label>
+            <label className={eActive} htmlFor="email">Email</label>
           </div>
         </div>
 
