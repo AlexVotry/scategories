@@ -4,16 +4,17 @@ import React, { useContext } from 'react';
 
 import Letter from './Letter/Letter';
 import CategoryList from './CategoryList';
-import Timer from './Timer';
 import ControlButtons from './ControlButtons';
 import Settings from './Settings';
 import JoinTeam from './JoinTeam';
 import TeamList from './TeamList';
 import UserContext from '../contexts/UserContext';
+import GameStateContext from '../contexts/GameStateContext';
 import { isEmpty } from 'lodash';
 
 const OpeningPage = () => {
   const {user} = useContext(UserContext);
+  // const gameState = useContext(GameStateContext);
 
   const joinTeam = () => {
     if (!isEmpty(user)) return null;
@@ -33,12 +34,11 @@ const OpeningPage = () => {
   }
   
   return (
-    <div className ="OpeningPage">
-        <Letter/>
+    <div className ="OpeningPage" style={{padding: '0 30px'}}>
+        <ControlButtons/>
         <CategoryList/>
         <div>
-          {displayName()}
-          <ControlButtons/>
+          {/* {displayName()} */}
           <TeamList/>
           {joinTeam()}
           {/* <Settings /> */}

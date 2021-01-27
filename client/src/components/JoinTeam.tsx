@@ -5,10 +5,12 @@ import socket from '../service/socketConnection';
 import UserContext from '../contexts/UserContext';
 
 const JoinTeam = () => {
+  const localState = JSON.parse(localStorage.getItem("userInfo"));
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [group, setGroup] = useState('');
   const [admin, setAdmin] = useState(false);
+  const [checkedIn, setCheckedIn] = useState(false);
   const [gActive, setGActive] = useState('');
   const [nActive, setNActive] = useState('');
   const [eActive, setEActive] = useState('');
@@ -16,6 +18,12 @@ const JoinTeam = () => {
 
   const handleChange = (e) => {
     setAdmin(e.target.checked);
+  }
+
+  const bypassSignin = e => {
+    setCheckedIn(e.target.checked);
+    socket.emit('initJoin', localState);
+    user.update(localState);
   }
 
   const handleSubmit = (e) => {
@@ -28,7 +36,6 @@ const JoinTeam = () => {
   }
 
   const checkPlaceholder = () => {
-    console.log('go:', group);
     if (!group) setGActive('');
     if (!name) setNActive('');
     if (!email) setEActive('');
@@ -38,6 +45,12 @@ const JoinTeam = () => {
     <div className="row joinTeam">
 
       <form className="col s5" onSubmit={handleSubmit}>
+        <div>
+          <p>
+            <input className="with-gap" name="checkedIn" type="checkbox" id="checkedIn" onChange={bypassSignin} />
+            <label htmlFor="checkedIn">Already joined a team</label>
+          </p>
+        </div>
         <div className="input-field col s12">
           <input id="group"
             type="text"
@@ -81,7 +94,7 @@ const JoinTeam = () => {
 
         <input type="submit" value="Submit" />
       </form>
-
+      
     </div>
   )
 

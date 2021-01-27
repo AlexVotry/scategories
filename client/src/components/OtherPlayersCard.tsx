@@ -76,9 +76,13 @@ const OtherPlayersCard = () => {
   }
 
   useEffect (() => {
-    socket.on('updateMessage', newMessages => {
-      setMessages(arr => [...arr, newMessages]);
-    });
+    let mounted = true;
+    if (mounted) {
+      socket.on('updateMessage', newMessages => {
+        setMessages(arr => [...arr, newMessages]);
+      });
+    }
+    return () => mounted = false;
   }, []);
 
   return (

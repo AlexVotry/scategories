@@ -29,7 +29,6 @@ const OthersGameSheet = (props) => {
     if (e.target.checked) {
       updateUserAnswers(temp[0], temp[1]);
     } 
-    console.log('ishandled:', isChecked);
   }
 
   const listForm = () => {
@@ -47,7 +46,6 @@ const OthersGameSheet = (props) => {
   const displayGuess = (guess, index) => {
     if (!guess) return;
     const label = index.toString();
-    console.log('ischecked:', isChecked)
     const highlight = isChecked[index] ? { color: 'white'} : {};
     return (
       <>
@@ -71,18 +69,24 @@ const OthersGameSheet = (props) => {
   }
   
   useEffect(() => {
-    socket.on('updateAnswers', newGuesses => {
-      const { answers, name } = newGuesses;
-      const index = answers[0];
-      const value = answers[1];
-      const i = parseInt(index.substring(0, 2));
-      
-      if (name === props.name) {
-        updateOtherAnswers(i, value);
-      } else if (name === user.name) {
-        updateUserAnswers(i, value);
-      }
-    })
+    let mounted = true;
+    if (mounted) {
+      console.log('other mounted:');
+      updateUserAnswers(42, 'no answer');
+      socket.on('updateAnswers', newGuesses => {
+        const { answers, name } = newGuesses;
+        const index = answers[0];
+        const value = answers[1];
+        const i = parseInt(index.substring(0, 2));
+        
+        if (name === props.name) {
+          updateOtherAnswers(i, value);
+        } else if (name === user.name) {
+          updateUserAnswers(i, value);
+        }
+      })
+    }
+    return () => mounted = false;
   }, [])
 
   return (

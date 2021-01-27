@@ -20,14 +20,23 @@ const CategoryList = () => {
   let teamAnswers = Object.keys(finalAnswers);
   const teamTotals = {};
 
+  const makeHeaders = () => {
+    return teamAnswers.map(team => {
+      teamAnswers[team] = 0; // reset teamAnswer to 0 everytime we refresh.
+      return (
+        <th key={team} style={{ color: colors[team] }}>{team}</th>
+      )
+    })
+  }
+
   const parseList = () => {
     return list.map((category, index) => {
       const i = pad(index);
       return (
-        <li className="categroyListItems" key={`${index}`}>
-          <div >{category} {index}</div>
-        {showAnswers(index)}
-        </li>
+        <tr className="categroyListItems" key={`${index}`}>
+          <td>{category}</td>
+          {showAnswers(index)}
+        </tr>
       )
     });
   }
@@ -37,9 +46,38 @@ const CategoryList = () => {
     if (!teamAnswers.length) return;
     return teamAnswers.map((team) => {
       const newMap = finalAnswers[team].answers;
+      if (isEmpty(newMap)) return;
       let answer = newMap.has(index) ? newMap.get(index) : '';
-      answer = displayAnswer(answer, team);
-      return <span className="teamAnswers" key={`${team}_${index}`} style={{color: colors[team]}}> -- {answer}</span>
+      const styledAnswer = displayAnswer(answer, team);
+      return (
+        <td className="teamAnswers" key={`${team}_${index}`} style={{color: colors[team]}}>
+          <button className="btn-small waves-effect waves-ripple" onClick={() => removePoint(team, index, answer)}><i className="material-icons">block</i></button>
+          {styledAnswer}
+        </td>
+      );
+    })
+  }
+
+  const removePoint = (team, index, answer) => {
+    const ans = `!${answer}`;
+    finalAnswers[team].answers.set(index, ans);
+    teamTotals[team] = teamTotals[team] - 1;
+    setScore(teamTotals);
+    serialize();
+    socket.emit('failedAnswer', finalAnswers);
+    deserialize()
+  }
+
+  const serialize = () => {
+    teamAnswers.forEach(team => {
+      const teamAnswers = finalAnswers[team].answers;
+      finalAnswers[team].answers = JSON.stringify(Array.from(teamAnswers.entries())); 
+    })
+  }
+
+  const deserialize = () => {
+    teamAnswers.forEach(team => {
+      finalAnswers[team].answers = new Map(JSON.parse(finalAnswers[team].answers));
     })
   }
 
@@ -66,24 +104,41 @@ const CategoryList = () => {
       const currentScore = teamTotals[team] || 0;
       const total = finalAnswers[team].score + (currentScore);
       return (
-          <div className="teamTotals" key={team}>{team}  currentScore: { currentScore } TotalScore:{ total }</div>
+        <td className="teamTotals" key={team} style={{ color: colors[team] }}>
+          <div>currentScore: { currentScore }</div>
+          <div>TotalScore:{ total }</div>
+        </td>
       )
     });
   }
+
   useEffect(() => {
     if (isEmpty(teamTotals)) return;
     const teamScore = ((teamTotals[user.team] || 0) + finalAnswers[user.team].score)
-    socket.emit('updateScores', { score: teamScore, team: user.team }); 
+    socket.emit('updateScores', { score: teamScore, team: user.team });
   }, [score]);
-  
-  return (
-    <div className="categoryList">
-      <ol>
-        {parseList()}
-      </ol>
-      {showTeamTotals()}
-    </div>
-  )
+
+  if (list.length) {
+    return (
+      <div className="categoryList">
+        <table>
+          <tbody>
+            <tr>
+              <th>Categories</th>
+              {makeHeaders()}
+            </tr>
+            {parseList()}
+            <tr>
+              <td></td>
+              {showTeamTotals()}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    )
+  } 
+  return <div>Scattegories</div>
+
 }
 
 export default CategoryList;
