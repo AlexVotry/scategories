@@ -1,4 +1,15 @@
 import React from 'react';
-import { ScoreUpdate } from '../types';
+import { getContext, getProvider } from './helper';
 
-export default React.createContext<ScoreUpdate | undefined> (undefined);
+const TeamScoreContext = React.createContext({});
+
+function useTeamScore() {
+  return getContext(TeamScoreContext, 'TeamScoreContext');
+};
+
+function TeamScoreProvider(props: any) {
+  const [teamScores, setTeamScores] = React.useState({});
+  return getProvider(TeamScoreContext, teamScores, setTeamScores, props);
+}
+
+export default { TeamScoreProvider, useTeamScore };

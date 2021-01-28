@@ -9,11 +9,16 @@ import Settings from './Settings';
 import JoinTeam from './JoinTeam';
 import TeamList from './TeamList';
 import UserContext from '../contexts/UserContext';
+import {styles} from '../cssObjects';
 import GameStateContext from '../contexts/GameStateContext';
 import { isEmpty } from 'lodash';
 
 const OpeningPage = () => {
   const {user} = useContext(UserContext);
+  const openingStyle = {
+    ...styles.flexRow,
+    padding: '0 30px' 
+  }
   // const gameState = useContext(GameStateContext);
 
   const joinTeam = () => {
@@ -34,15 +39,16 @@ const OpeningPage = () => {
   }
   
   return (
-    <div className ="OpeningPage" style={{padding: '0 30px'}}>
+    <div className="OpeningPage" style={openingStyle}>
+      <div className="openingPageLeft" style={{width: '70vw'}}>
         <ControlButtons/>
         <CategoryList/>
-        <div>
-          {/* {displayName()} */}
-          <TeamList/>
-          {joinTeam()}
-          {/* <Settings /> */}
-        </div>
+        {joinTeam()}
+      </div>
+      <div className="teamList" style={{ width: '25vw' }}>
+        <TeamList/>
+        {/* <Settings /> */}
+      </div>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext} from 'react';
 
 import OpeningPage from '../OpeningPage';
 import CurrentPlayerCard from '../CurrentPlayerCard';
@@ -9,6 +9,7 @@ import GameStateContext from '../../contexts/GameStateContext';
 
 import socket from '../../service/socketConnection';
 import { styles } from '../../cssObjects';
+import { stringify } from '../../service/strings';
 
 function App({ myTeam}): JSX.Element {
 const gameState = useContext(GameStateContext);
@@ -26,19 +27,14 @@ const {userAnswers} = useContext(UserAnswersContext);
         </div>
       );
     } 
+    // send answers to server
     if (gameState === 'ready' && userAnswers.size) {
-      // const results = new Map();
-      // // remove the name from the key so they match all other players key for comparison.
-      // userAnswers.forEach((value, key) => {
-      //   const index = parseInt(key.substring(0, 2));
-      //   results.set(index, value);
-      // })
-      const final = JSON.stringify(Array.from(userAnswers.entries()));
+      const final = stringify(userAnswers);
       socket.emit('FinalAnswer', { team: myTeam, answers: final });
       userAnswers.clear();
     }
 
-    return <OpeningPage />;
+    return <OpeningPage/>;
   }
 
 return showCorrectPage();

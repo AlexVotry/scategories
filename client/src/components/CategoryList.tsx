@@ -4,8 +4,9 @@ import React, { useContext, useEffect, useState } from 'react';
 import CategoryContext from '../contexts/CategoryContext';
 import FinalAnswersContext from '../contexts/FinalAnswersContext';
 import UserContext from '../contexts/UserContext';
+import TeamScoreContext from '../contexts/TeamScoreContext';
 import socket from '../service/socketConnection';
-import {pad} from '../service/strings';
+import {pad, stringify, newMap} from '../service/strings';
 import {colors, styles} from '../cssObjects';
 import { isEmpty, isEqual } from 'lodash';
 import { teamAnswer, categoryList } from '../data/categoryList.js';
@@ -16,9 +17,11 @@ const CategoryList = () => {
   const list = useContext(CategoryContext);
   const finalAnswers = useContext(FinalAnswersContext);
   const {user} = useContext(UserContext);
+  const [teamScores, setTeamScores] = TeamScoreContext.useTeamScore();
   const [score, setScore] = useState({});
   let teamAnswers = Object.keys(finalAnswers);
   const teamTotals = {};
+  const allTeamsScore = {};
 
   const makeHeaders = () => {
     return teamAnswers.map(team => {
@@ -46,7 +49,7 @@ const CategoryList = () => {
     if (!teamAnswers.length) return;
     return teamAnswers.map((team) => {
       const newMap = finalAnswers[team].answers;
-      if (isEmpty(newMap)) return;
+      // if (isEmpty(newMap)) return;
       let answer = newMap.has(index) ? newMap.get(index) : '';
       const styledAnswer = displayAnswer(answer, team);
       return (
@@ -71,13 +74,13 @@ const CategoryList = () => {
   const serialize = () => {
     teamAnswers.forEach(team => {
       const teamAnswers = finalAnswers[team].answers;
-      finalAnswers[team].answers = JSON.stringify(Array.from(teamAnswers.entries())); 
+      finalAnswers[team].answers = stringify(teamAnswers); 
     })
   }
 
   const deserialize = () => {
     teamAnswers.forEach(team => {
-      finalAnswers[team].answers = new Map(JSON.parse(finalAnswers[team].answers));
+      finalAnswers[team].answers = newMap(finalAnswers[team].answers);
     })
   }
 
@@ -103,6 +106,7 @@ const CategoryList = () => {
     return teamAnswers.map(team => {
       const currentScore = teamTotals[team] || 0;
       const total = finalAnswers[team].score + (currentScore);
+      allTeamsScore[team] = total;
       return (
         <td className="teamTotals" key={team} style={{ color: colors[team] }}>
           <div>currentScore: { currentScore }</div>
@@ -114,6 +118,7 @@ const CategoryList = () => {
 
   useEffect(() => {
     if (isEmpty(teamTotals)) return;
+    setTeamScores(allTeamsScore);
     const teamScore = ((teamTotals[user.team] || 0) + finalAnswers[user.team].score)
     socket.emit('updateScores', { score: teamScore, team: user.team });
   }, [score]);

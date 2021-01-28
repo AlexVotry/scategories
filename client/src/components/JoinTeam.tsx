@@ -44,7 +44,7 @@ const JoinTeam = () => {
   return (
     <div className="row joinTeam">
 
-      <form className="col s5" onSubmit={handleSubmit}>
+      <form className="col s12" onSubmit={handleSubmit}>
         <div>
           <p>
             <input className="with-gap" name="checkedIn" type="checkbox" id="checkedIn" onChange={bypassSignin} />

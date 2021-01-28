@@ -12,7 +12,7 @@ import TimerContext from '../contexts/TimerContext';
 import GameStateContext from '../contexts/GameStateContext';
 import UserAnswersContext from '../contexts/UserAnswersContext';
 import FinalAnswersContext from '../contexts/FinalAnswersContext';
-// import TeamScoreContext from '../contexts/TeamScoreContext';
+import TeamScoreContext from '../contexts/TeamScoreContext';
 
 function WebSocketUtility () {
   // const localState = JSON.parse(localStorage.getItem("userInfo"));
@@ -27,7 +27,7 @@ function WebSocketUtility () {
   const [finalAnswers, setFinalAnswers] = useState({})
   const [userAnswers, setUserAnswers] = useState(new Map())
   const [finalSubmited, setFinalSubmited] = useState(false);
-  // const [teamScore, setTeamScore] = useState({});
+  const [teamScores, setTeamScore] = useState([]);
 
   const update = user => setUser(user);
   const updateUA = answers => setUserAnswers(answers);
@@ -85,7 +85,6 @@ function WebSocketUtility () {
           }
         })
         setFinalAnswers(finalSubmissions);
-        console.log('finalSubmissions', finalSubmissions)
       });
     }
 
@@ -99,9 +98,11 @@ function WebSocketUtility () {
             <TimerContext.Provider value={timer}>
               <GameStateContext.Provider value={gameState}>
               <FinalAnswersContext.Provider value={finalAnswers}>
+                <TeamScoreContext.TeamScoreProvider>
                 <UserAnswersContext.Provider value = {{ userAnswers, updateUA }}>
                   <App myTeam={myTeam}/>
                 </UserAnswersContext.Provider>
+                </TeamScoreContext.TeamScoreProvider>
               </FinalAnswersContext.Provider>
               </GameStateContext.Provider>
             </TimerContext.Provider>
