@@ -23,20 +23,22 @@ const OthersGameSheet = (props) => {
 
   const handleChange = (e) => {
     const userAnswer = e.target.value;
-    const temp = userAnswer.split('_');
-    const checked = {...isChecked, [temp[0]]: e.target.checked};
+    const arr = userAnswer.split('_');
+    const val = arr[1].split('^');
+    const checked = {...isChecked, [arr[0]]: e.target.checked};
     setIsChecked(() => (checked));
     if (e.target.checked) {
-      updateUserAnswers(temp[0], temp[1]);
+      updateUserAnswers(arr[0], val[1]);
     } 
   }
 
   const listForm = () => {
-    return list.map((category, index) => {
+    return list.map((category, i) => {
+      const index = `${pad(i)}_${props.name}`;
       const guess = guesses.has(index) ? guesses.get(index) : '';
       
       return (
-        <li className="otherGameSheetListItem" key={index}>
+        <li className="otherGameSheetListItem" key={i}>
           {displayGuess(guess, index)}
         </li>
       )
@@ -45,12 +47,11 @@ const OthersGameSheet = (props) => {
   
   const displayGuess = (guess, index) => {
     if (!guess) return;
-    const label = index.toString();
     const highlight = isChecked[index] ? { color: 'white'} : {};
     return (
       <>
-        <input className="with-gap" style={answerStyle} name={guess} value={`${index}_${guess}`} type="checkbox" id={label} onChange={e => handleChange(e)} />
-        <label style={highlight} htmlFor={label}>{guess}</label>
+        <input className="with-gap" style={answerStyle} name={guess} value={`${index}^${guess}`} type="checkbox" id={index} onChange={e => handleChange(e)} />
+        <label style={highlight} htmlFor={index}>{guess}</label>
       </>
     )
   }
@@ -71,18 +72,16 @@ const OthersGameSheet = (props) => {
   useEffect(() => {
     let mounted = true;
     if (mounted) {
-      console.log('other mounted:');
       updateUserAnswers(42, 'no answer');
       socket.on('updateAnswers', newGuesses => {
         const { answers, name } = newGuesses;
         const index = answers[0];
         const value = answers[1];
-        const i = parseInt(index.substring(0, 2));
         
         if (name === props.name) {
-          updateOtherAnswers(i, value);
+          updateOtherAnswers(index, value);
         } else if (name === user.name) {
-          updateUserAnswers(i, value);
+          updateUserAnswers(index, value);
         }
       })
     }

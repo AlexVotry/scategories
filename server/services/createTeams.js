@@ -70,7 +70,7 @@ async function createMockTeams(players, group) {
     if (eachUser.length) {
       const curUser = eachUser[0];
 
-      if (unique.length > 2) {
+      if (unique.length > 3) {
         eachUser[0].team = 'Red';
         if (!includes(teams.Red, curUser.name)) {
           teams.Red.push(...eachUser);

@@ -27,6 +27,12 @@ const {userAnswers} = useContext(UserAnswersContext);
       );
     } 
     if (gameState === 'ready' && userAnswers.size) {
+      // const results = new Map();
+      // // remove the name from the key so they match all other players key for comparison.
+      // userAnswers.forEach((value, key) => {
+      //   const index = parseInt(key.substring(0, 2));
+      //   results.set(index, value);
+      // })
       const final = JSON.stringify(Array.from(userAnswers.entries()));
       socket.emit('FinalAnswer', { team: myTeam, answers: final });
       userAnswers.clear();
