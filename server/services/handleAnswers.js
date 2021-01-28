@@ -11,6 +11,7 @@ async function handleAnswers (answer) {
     name: answer.team,
     answers: new Map(JSON.parse(answer.answers))
   }
+  team.answers.delete(42); // built in a dummy answer to ensure all participants send and answer, (removing here)
 
   const finalAnswers = await addTeam(team);
   return finalAnswers;
@@ -113,7 +114,6 @@ function sendBestAnswer(team) {
 }
 
 const updateScores = async scores => {
-  console.log('scores:', scores);
   const { score, team } = scores;
   await db.Team.findOneAndUpdate(
     { name: team },

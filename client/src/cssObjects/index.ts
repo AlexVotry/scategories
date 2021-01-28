@@ -16,9 +16,20 @@ export const styles = {
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
+  flexColumn: <CSSProperties> {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+  },
   flexPlayers: <CSSProperties> {
     display: 'flex',
     flexDirection: 'row',
+    alignItems: 'flex-start'
+  },
+  flexHeader: <CSSProperties> {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     alignItems: 'center'
   },
   hover: <CSSProperties> {
@@ -31,5 +42,26 @@ export const styles = {
     position: 'absolute',
     right: '20px',
     bottom: '20px'
+  },
+  messages: <CSSProperties> {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    marginTop: '10px'
+  },
+  speechBox: <CSSProperties> {
+    borderStyle: 'solid',
+    borderWidth: '2px',
+    padding: '5px',
+    borderRadius: '10px',
+    position: 'relative',
+  },
+  italicsBold: <CSSProperties> {
+    fontStyle: 'italic',
+    fontWeight: 'bold'
+  },
+  messageLabel: <CSSProperties> {
+    fontWeight: 'bold',
+    fontColor: 'black'
   }
 }

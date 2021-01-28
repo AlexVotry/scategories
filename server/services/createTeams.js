@@ -8,7 +8,7 @@ mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, us
 const db = require('../models');
 
 
-async function createTeams(players) {
+async function createTeams(players, group) {
   let teams = { Blue: [], Red: [], Green: [], Purple: [], Gold: [] };
 
   const unique = uniqWith(players, isEqual);
@@ -43,14 +43,14 @@ async function createTeams(players) {
       }
     }
   }
+  updateGroups(teams, group);
 
   return teams;
 }
 
-async function createMockTeams(players) {
-  let teams = mockTeams;
-  console.log('blue:', teams.Blue)
-  teams.Blue = [];
+async function createMockTeams(players, group) {
+  let teams = { Blue: [], Red: [], Green: [], Purple: [], Gold: [] };
+  teams = mockTeams;
   const unique = uniqBy(players, 'name');
   const len = unique.length;
   let noOfTeams = 0;
@@ -70,7 +70,7 @@ async function createMockTeams(players) {
     if (eachUser.length) {
       const curUser = eachUser[0];
 
-      if (unique.length > 2) {
+      if (unique.length > 3) {
         eachUser[0].team = 'Red';
         if (!includes(teams.Red, curUser.name)) {
           teams.Red.push(...eachUser);
@@ -93,8 +93,31 @@ async function createMockTeams(players) {
       );
     }
   }
+  updateGroups(teams, group);
 
   return teams;
 }
 
-module.exports = { createMockTeams, createTeams };
+async function updateGroups(teams, group) {
+  await db.Group.findOneAndUpdate(
+    { name: group },
+    teams,
+    { upsert: true },
+    (err, doc) => {
+      if (err) throw err;
+    })
+}
+
+const getTeams = group => {
+    return new Promise((resolve, reject) => {
+      db.Group.find({name: group}, (err, doc) => {
+        if (err) {
+          reject(err);
+          throw err;
+        }
+        resolve(doc[0].teams);
+      });
+    })
+}
+
+module.exports = { createMockTeams, createTeams, getTeams };

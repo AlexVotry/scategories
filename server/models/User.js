@@ -6,6 +6,7 @@ const User = new Schema({
   email: String,
   admin: Boolean,
   team: String,
+  group: String,
   wins: {type: Number, default: 0 },
   losses: {type: Number, default: 0 }
 });

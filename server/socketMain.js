@@ -4,7 +4,7 @@ const { mongoUrl } = require('./secrets');
 
 const handleGame = require('./services/handleGame');
 const { handleAnswers, getFinalAnswers, compareTeamAnswers, updateScores} = require('./services/handleAnswers');
-const {createMockTeams, createTeams } = require('./services/createTeams');
+const {createMockTeams, createTeams, getTeams } = require('./services/createTeams');
 const {keysIn , isEqual} = require('lodash');
 const uri = mongoUrl;
 
@@ -20,26 +20,39 @@ let myTeam;
 let numOfCategories = 6;
 let teamNames;
 let count = totalPlayers;
+let teamGroup;
 
 function socketMain(io, socket) {
   let room = '';
 
-  socket.on('joinTeam', async formInfo => {
-    const {name, group, admin} = formInfo;
+  socket.on('initJoin', async localState => {
+    const {name, group, team } = localState;
+    teamGroup = group;
+    socket.join(group);
+    socket.join(team);
+    room = team;
+    const currentTeams = await getTeams(group);
+    teams = currentTeams;
+    console.log(`${name} re-joined ${group} `);
+    assignTeams(teams);
+    socket.emit('initUser', { currentUser: localState, teams });
+  });
 
+  socket.on('joinTeam', async formInfo => {
+    const {name, group} = formInfo;
+    teamGroup = group;
     socket.join(group);
     room = group;
     console.log(`${name} joined ${group}`);
     const currentUser = await addUserToGroup(formInfo);
-    socket.emit('currentUser:', currentUser);
+    socket.emit('currentUser', currentUser)
   });
 
   socket.on('createTeams', async data => {
-    const newTeams = teams = await createMockTeams(players);
+    teams = await createMockTeams(players, teamGroup);
     totalPlayers = count = players.length;
-    totalTeams = Object.keys(newTeams).length;
-    teamNames = keysIn(newTeams);
-    io.to(room).emit('newTeams', newTeams);
+    assignTeams(teams);
+    io.to(room).emit('newTeams', teams);
   });
 
   socket.on('changeGameState', (gameState) => {
@@ -88,6 +101,15 @@ function socketMain(io, socket) {
       await updateScores(teamScores);
     } 
   });
+
+  socket.on('failedAnswer', finalAnswers => {
+    io.to(teamGroup).emit('AllSubmissions', finalAnswers)
+  });
+
+  function assignTeams(teams) {
+    totalTeams = Object.keys(teams).length;
+    teamNames = keysIn(teams);
+  }
 }
 
 const addUserToGroup = async user => {

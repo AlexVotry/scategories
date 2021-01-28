@@ -37,8 +37,15 @@ function WebSocketUtility () {
   useEffect(() => {
     initialize();
   }, [user, teams]);
-
+  
   const initialize = () => {
+    
+    socket.on('initUser', info => {
+      setUser(info.currentUser);
+      setMyTeam(user.team);
+      setTeams(info.teams)
+    });
+
     socket.on('currentUser', user => setUser(user));
 
     socket.on('newGame', gameInfo => {
@@ -50,13 +57,15 @@ function WebSocketUtility () {
       setTeams(newTeams);
       const team = !isEmpty(user) ? assignTeam(newTeams, user) : null;
       const newUser = {...user, team };
+      localStorage.removeItem('userInfo');
       setUser(newUser);
       setMyTeam(team);
+      localStorage.setItem('userInfo', JSON.stringify(newUser));
     }).emit('myTeam', user.team);
 
     socket.on('gameState', gameState => {
       setGameState(gameState)
-      if (gameState === 'running');
+      // if (gameState === 'running');
     });
 
     socket.on('Clock', clock => {

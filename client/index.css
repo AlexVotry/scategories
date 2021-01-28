@@ -1,3 +1,7 @@
+@font-face {
+  font-family: 'digital-7';
+  src: local('digital-7'), url(./src/fonts/digital-7.ttf);
+}
 
 #container {
   max-width: 100%;
@@ -9,3 +13,48 @@ ol {
   margin: 0;
   padding: 0;
 }
+
+.userMessage::before {
+  content: "";
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  border-left: 5px solid #39CCCC;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #39CCCC;
+  border-bottom: 5px solid transparent;
+  left: 10px;
+  bottom: -10px;
+}
+
+.otherMessage::before {
+  content: "";
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  border-left: 5px solid transparent;
+  border-right: 5px solid #85144b;
+  border-top: 5px solid #85144b;
+  border-bottom: 5px solid transparent;
+  right: 10px;
+  bottom: -10px;
+}
+
+#letterHeader {
+  background-color: #222222;
+  background: repeating-linear-gradient(45deg, #2b2b2b 0%, #2b2b2b 10%, #222222 0%, #222222 50%) 0 / 15px 15px;
+  padding: 0 30px;
+}
+
+.timer {
+  font-family: digital-7;
+  color: wheat;
+  font-size: 7em;
+  width: 300px;
+}
+
+.waves-effect.waves-brown .waves-ripple {
+   /* The alpha value allows the text and background color
+   of the button to still show through. */
+    background-color: rgba(121, 85, 72, 0.65);
+  }

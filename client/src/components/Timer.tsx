@@ -8,7 +8,7 @@ const Timer = () => {
   const timer = useContext(TimerContext);
 
   return (
-    <div>Timer: {timer} </div>
+    <div className="timer">{timer} </div>
   )
 };
 
