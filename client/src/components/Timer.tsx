@@ -8,7 +8,9 @@ const Timer = () => {
   const timer = useContext(TimerContext);
 
   return (
-    <div className="timer">{timer} </div>
+    <div className="timer">
+      <div style={{float: 'right'}}>{timer}</div>
+    </div>
   )
 };
 
