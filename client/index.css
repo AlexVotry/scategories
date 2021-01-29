@@ -14,6 +14,10 @@ ol {
   padding: 0;
 }
 
+.hr {
+  border-bottom: 1px solid grey;
+}
+
 .userMessage::before {
   content: "";
   width: 0px;
@@ -53,8 +57,7 @@ ol {
   width: 300px;
 }
 
-.waves-effect.waves-brown .waves-ripple {
-   /* The alpha value allows the text and background color
-   of the button to still show through. */
-    background-color: rgba(121, 85, 72, 0.65);
-  }
+.leaderboard {
+  text-shadow: 1px 1px 2px aqua, 0 0 1em white;
+  font-size: 1.2em;
+}

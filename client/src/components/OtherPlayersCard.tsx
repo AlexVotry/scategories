@@ -1,6 +1,7 @@
 // shows the scategory list (PlayerList component), letter, timer, and control buttons for each team. 
 
 import React, { useContext, useEffect, useState } from 'react';
+import { Scrollbars } from 'react-custom-scrollbars';
 import OthersGameSheet from './OthersGameSheet';
 import Timer from './Timer';
 import Letter from './Letter/Letter';
@@ -14,11 +15,14 @@ import socket from '../service/socketConnection';
 const OtherPlayersCard = () => {
   const [teammates, setTeammates] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [cardHeight, setCardHeight] = useState(0);
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const [windowHeight, setWindowHeight] = useState(0);
   const { user } = useContext(UserContext);
   const teams = useContext(TeamsContext);
   const team = teams[user.team];
   const others = findOthers(team, user);
-
+  console.log('win:', windowHeight, 'header:', headerHeight, 'card:', cardHeight);
   const otherCard = {
     ...styles.flexColumn,
     width: '55vw'
@@ -35,7 +39,7 @@ const OtherPlayersCard = () => {
     width: '100%',
     border: '4px ridge white'
   }
-
+  
   const userStyle = {
     ...styles.speechBox,
     borderColor: '#39CCCC',
@@ -48,7 +52,13 @@ const OtherPlayersCard = () => {
     color: '#85144b',
     alignSelf: 'flex-end'
   }
-
+  
+  const scrollBarStyle = {
+    width: 500,
+    height: windowHeight - headerHeight - cardHeight - 200
+  }
+  console.log(scrollBarStyle);
+  
   const renderOthers = () => {
     return others.map(({name}) => {
       return (
@@ -78,6 +88,9 @@ const OtherPlayersCard = () => {
   useEffect (() => {
     let mounted = true;
     if (mounted) {
+      setCardHeight(document.getElementById('otherPlayers').clientHeight);
+      setHeaderHeight(document.getElementById('leaderboard').clientHeight);
+      setWindowHeight(window.innerHeight);
       socket.on('updateMessage', newMessages => {
         setMessages(arr => [...arr, newMessages]);
       });
@@ -87,13 +100,14 @@ const OtherPlayersCard = () => {
 
   return (
     <div className="otherCard" style={otherCard}>
-      <div className="otherPlayers" style={cardStyle} >
+      <div id="otherPlayers" className="otherPlayers" style={cardStyle} >
         {renderOthers()}
       </div>
-
-      <div className="messages" style={styles.messages}>
-        {showMessages()}
-      </div>
+      <Scrollbars style={scrollBarStyle} >
+        <div className="messages" style={styles.messages}>
+          {showMessages()}
+        </div>
+      </Scrollbars>
     </div>
   )
 }

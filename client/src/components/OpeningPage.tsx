@@ -39,9 +39,10 @@ const OpeningPage = () => {
   }
   
   return (
+    <>
+        <ControlButtons/>
     <div className="OpeningPage" style={openingStyle}>
       <div className="openingPageLeft" style={{width: '70vw'}}>
-        <ControlButtons/>
         <CategoryList/>
         {joinTeam()}
       </div>
@@ -50,6 +51,7 @@ const OpeningPage = () => {
         {/* <Settings /> */}
       </div>
     </div>
+    </>
   );
 };
 

@@ -20,26 +20,27 @@ const CategoryList = () => {
   const [teamScores, setTeamScores] = TeamScoreContext.useTeamScore();
   const [score, setScore] = useState({});
   let teamAnswers = Object.keys(finalAnswers);
+  const columns = Math.floor(12 / teamAnswers.length);
+  const col = `col s${columns}`;
   const teamTotals = {};
   const allTeamsScore = {};
 
   const makeHeaders = () => {
-    return teamAnswers.map(team => {
+    return teamAnswers.map((team) => {
       teamAnswers[team] = 0; // reset teamAnswer to 0 everytime we refresh.
       return (
-        <th key={team} style={{ color: colors[team] }}>{team}</th>
+        <h5 className={col} key={team} style={{ color: colors[team] }}>{team}</h5>
       )
     })
   }
 
   const parseList = () => {
     return list.map((category, index) => {
-      const i = pad(index);
       return (
-        <tr className="categroyListItems" key={`${index}`}>
-          <td>{category}</td>
+        <div className="categroyListItems row hr" key={`${index}`}>
+          <div className={col}>{category}</div>
           {showAnswers(index)}
-        </tr>
+        </div>
       )
     });
   }
@@ -49,14 +50,12 @@ const CategoryList = () => {
     if (!teamAnswers.length) return;
     return teamAnswers.map((team) => {
       const newMap = finalAnswers[team].answers;
-      // if (isEmpty(newMap)) return;
       let answer = newMap.has(index) ? newMap.get(index) : '';
       const styledAnswer = displayAnswer(answer, team);
       return (
-        <td className="teamAnswers" key={`${team}_${index}`} style={{color: colors[team]}}>
-          <button className="btn-small waves-effect waves-ripple" onClick={() => removePoint(team, index, answer)}><i className="material-icons">block</i></button>
-          {styledAnswer}
-        </td>
+        <div className={col} key={`${team}_${index}`} style={{color: colors[team]}}>
+          <a style={{ color: colors[team] }} onClick={() => removePoint(team, index, answer)}>{styledAnswer}</a>
+        </div>
       );
     })
   }
@@ -95,7 +94,7 @@ const CategoryList = () => {
           teamTotals[team] = 1;
         }
       }
-      return <strong>{answer}</strong>;
+      return <span style={{fontWeight: 'bold'}}>{answer}</span>;
     }
   }
 
@@ -103,15 +102,15 @@ const CategoryList = () => {
     if (!isEqual(teamTotals, score)) {
       setScore(teamTotals);
     }
-    return teamAnswers.map(team => {
+    return teamAnswers.map((team) => {
       const currentScore = teamTotals[team] || 0;
       const total = finalAnswers[team].score + (currentScore);
       allTeamsScore[team] = total;
       return (
-        <td className="teamTotals" key={team} style={{ color: colors[team] }}>
-          <div>currentScore: { currentScore }</div>
-          <div>TotalScore:{ total }</div>
-        </td>
+        <div className={col} key={team} style={{ color: colors[team] }}>
+          <div>Current: { currentScore }</div>
+          <div>Total:{ total }</div>
+        </div>
       )
     });
   }
@@ -119,26 +118,21 @@ const CategoryList = () => {
   useEffect(() => {
     if (isEmpty(teamTotals)) return;
     setTeamScores(allTeamsScore);
-    const teamScore = ((teamTotals[user.team] || 0) + finalAnswers[user.team].score)
-    socket.emit('updateScores', { score: teamScore, team: user.team });
+    socket.emit('updateScores', { score: allTeamsScore[user.team], team: user.team });
   }, [score]);
 
   if (list.length) {
     return (
-      <div className="categoryList">
-        <table>
-          <tbody>
-            <tr>
-              <th>Categories</th>
-              {makeHeaders()}
-            </tr>
-            {parseList()}
-            <tr>
-              <td></td>
-              {showTeamTotals()}
-            </tr>
-          </tbody>
-        </table>
+      <div className="categoryList container">
+        <div className="row hr">
+          <div className={col}></div>
+          {makeHeaders()}
+        </div>
+        {parseList()}
+        <div className="row">
+          <div className={col}><strong>Score</strong></div>
+          {showTeamTotals()}
+        </div>
       </div>
     )
   } 

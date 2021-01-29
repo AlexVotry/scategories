@@ -22,7 +22,7 @@ async function handleGame(io, socket, room, gameState, clock) {
     const categories = catArr[0];
     const gameInfo = { currentLetter, categories};
     io.to(room).emit('newGame', gameInfo);
-    counter = await runClock(counter, socket, io, room, gameState);
+    // counter = await runClock(counter, socket, io, room, gameState);
   } else {
     counter = clock;
     io.to(room).emit('gameState', gameState);

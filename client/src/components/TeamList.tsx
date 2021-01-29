@@ -38,25 +38,10 @@ function TeamList () {
     })
   }
 
-  // const orderTeams = () => {
-  //   const sorted = [];
-  //   if (!isEmpty(teamScores)) {
-  //     for (let team in teamScores) {
-  //       sorted.push([team, teamScores[team]])
-  //     }
-  //     sorted.sort((a,b) => a[1] - b[1]).reverse();
-  //     sortedTeams = [];
-  //     sorted.forEach(team => {
-  //       sortedTeams.push(team[0]);
-  //     })
-  //   } 
-  // }
-
   if (isEmpty(list)) return <div></div>;
 
   return (
     <div>
-      <h3>Teams</h3>
       {renderTeams()}
     </div>
   );
