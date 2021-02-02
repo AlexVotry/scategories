@@ -15,7 +15,7 @@ let teams = {};
 const players = [];
 let totalPlayers;
 let totalTeams;
-let counter = 6;
+let timer = 6;
 let myTeam;
 let numOfCategories = 6;
 let teamNames;
@@ -62,7 +62,7 @@ function socketMain(io, socket) {
         teams[name].splice(-1, 1, 0);
       });
     };
-    handleGame(io, socket, room, gameState, counter);
+    handleGame(io, socket, room, gameState, timer, numOfCategories);
   });
 
   // during active play join (team); between play join (room);
@@ -81,10 +81,10 @@ function socketMain(io, socket) {
   });
   
   socket.on('FinalAnswer', async finalAnswers => {  
-    await handleAnswers(finalAnswers);
+    await handleAnswers(finalAnswers, teamGroup);
     count--;
     if (!count) {
-      const teamAnswers = await getFinalAnswers(teamNames);
+      const teamAnswers = await getFinalAnswers(teamGroup);
       const finalAnswers = await compareTeamAnswers(teamAnswers, numOfCategories)
       io.to(room).emit('AllSubmissions', finalAnswers);
       count = totalPlayers;
@@ -98,12 +98,17 @@ function socketMain(io, socket) {
     
     if ( currentScore !== score) {
       currentTeam.splice(-1, 1, score);
-      await updateScores(teamScores);
+      await updateScores(teamScores, teamGroup);
     } 
   });
 
   socket.on('failedAnswer', finalAnswers => {
     io.to(teamGroup).emit('AllSubmissions', finalAnswers)
+  });
+
+  socket.on('gameChoices', gameChoices => {
+    numOfCategories = gameChoices.categories || numOfCategories;
+    timer = gameChoices.timer * 60;
   });
 
   function assignTeams(teams) {
@@ -114,7 +119,7 @@ function socketMain(io, socket) {
 
 const addUserToGroup = async user => {
   await db.User.findOneAndUpdate(
-    { name: user.name},
+    { name: user.name, group: user.group },
     user, 
     { upsert: true }, 
     (err, doc) => {

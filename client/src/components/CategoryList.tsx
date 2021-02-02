@@ -20,7 +20,7 @@ const CategoryList = () => {
   const [teamScores, setTeamScores] = TeamScoreContext.useTeamScore();
   const [score, setScore] = useState({});
   let teamAnswers = Object.keys(finalAnswers);
-  const columns = Math.floor(12 / teamAnswers.length);
+  const columns = Math.floor(12 / (teamAnswers.length + 1));
   const col = `col s${columns}`;
   const teamTotals = {};
   const allTeamsScore = {};
@@ -85,7 +85,7 @@ const CategoryList = () => {
 
   const displayAnswer = (answer, team) => {
     if (answer.startsWith('!')) {
-      return <s>{answer.substring(1)}</s>
+      return <s style={{color: 'black'}}>{answer.substring(1)}</s>
     } else {
       if (answer.length) {
         if (teamTotals.hasOwnProperty(team)) {
@@ -118,25 +118,26 @@ const CategoryList = () => {
   useEffect(() => {
     if (isEmpty(teamTotals)) return;
     setTeamScores(allTeamsScore);
+    console.log('teamScores:', teamScores, allTeamsScore);
     socket.emit('updateScores', { score: allTeamsScore[user.team], team: user.team });
   }, [score]);
 
   if (list.length) {
     return (
-      <div className="categoryList container">
+      <div className="categoryList container" style={{ marginTop: '20px'}}>
         <div className="row hr">
-          <div className={col}></div>
+          <h5 className={col}>Scategories</h5>
           {makeHeaders()}
         </div>
         {parseList()}
         <div className="row">
-          <div className={col}><strong>Score</strong></div>
+          <div className={col} style={{ fontWeight: 'bold' }}>Score</div>
           {showTeamTotals()}
         </div>
       </div>
     )
   } 
-  return <div>Scattegories</div>
+  return <div></div>
 
 }
 

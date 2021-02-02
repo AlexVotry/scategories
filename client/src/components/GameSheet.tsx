@@ -15,11 +15,14 @@ const GameSheet = () => {
   const [message, setMessage] = useState('');
   const [active, setActive] = useState('');
 
+  const bgColor = user.team === "Gold" ? 'grey' : 'white';
+
   const messageBackground = {
     color: colors[user.team],
-    backgroundColor: 'white',
-    marginTop: '10px'
+    backgroundColor: bgColor,
+    padding: 0
   }
+
   const catList = {
     ...styles.flexRow,
     alignItems: 'center'
@@ -47,7 +50,7 @@ const GameSheet = () => {
       return (
         <li className="gameSheetListItem" style={catList} key={category} >
           <div className="category" style={{width: '50%'}}>{category}</div>
-          <div className="input-field inline" style={{ width: '40%'}}>
+          <div className="input-field inline" style={{ width: '40%', margin: '0'}}>
             <input
               style={messageBackground}
               id={`cat_${index}`}

@@ -1,37 +1,75 @@
 // settings has the join form, adjust timer, add categories, choose how many categories for the list.
 
-import React, {useState, useEffect} from 'react';
-import { styles } from '../cssObjects';
-import JoinTeam from './JoinTeam';
+import React, { useState, useContext } from 'react';
+
+import UserContext from '../contexts/UserContext';
+import socket from '../service/socketConnection';
 
 const Settings = () => {
-  const [openForm, setOpenForm] = useState(false);
-  const [currentDisplay, setCurrentDisplay] = useState(styles.none);
+  const { user } = useContext(UserContext);
+  const [display, setDisplay] = useState("none");
+  const [categories, setCategories] = useState(6);
+  const [timer, setTimer] = useState(12);
 
-  const exposeOtherButtons = () => {
-    setCurrentDisplay(styles.bottomRight);
+  const settingsStyle = {
+    display: display
+  }
+  
+  const toggleForm = () => {
+    if (display === 'block') {
+      setDisplay('none');
+    } else {
+      setDisplay("block")
+    }
   }
 
-  const handleClick = () => {
-    setOpenForm(!openForm);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setDisplay('none');
+    socket.emit('gameChoices', {timer, categories});
   }
 
-  const showForm = () => {
-    return openForm ? <JoinTeam/> : null;
+  const handleChange = (e, state) => {
+    state === "timer" ? setTimer(e.target.value) : setCategories(e.target.value);
   }
 
+  function showSettingsForm () {
+    console.log('showSettingsForm')
+    return (
+      <form className="col s12" style={settingsStyle} onSubmit={handleSubmit}>
+        <div className="input-field col s12">
+          <select id="timerSelect" className="browser-default" onChange={e => handleChange(e, "timer")}>
+            <option value="">Set the Timer</option>
+            <option value="1">1 minute</option>
+            <option value="2">2 minute</option>
+            <option value="3">3 minutes</option>
+            <option value="4">4 minutes</option>
+            <option value="5">5 minutes</option>
+          </select>
+        </div >
+        <div className="input-field col s12">
+          <select id="categorySelect" className="browser-default" onChange={e => handleChange(e, "cat")}>
+            <option value="">How many Categories</option>
+            <option value="12">12 categories</option>
+            <option value="11">11 categories</option>
+            <option value="10">10 categories</option>
+            <option value="9">9 categories</option>
+            <option value="8">8 categories</option>
+            <option value="7">7 categories</option>
+            <option value="6">6 categories</option>
+          </select>
+        </div >
+        <button className="waves-effect waves-light btn-small" type="submit" >submit</button>
+      </form>
+    )
+  }
+
+  if (!user.admin) return <div></div>;
   return (
     <div  >
-      <a className="btn-floating btn-large red" style={styles.bottomRight} onMouseEnter={exposeOtherButtons}>
-        <i className="large material-icons">mode_edit</i>
-      </a>
-      <ul style={currentDisplay}>
-        <li><a className="btn-floating red"><i className="material-icons" onClick={handleClick}>Join Team</i></a></li>
-        <li><a className="btn-floating yellow darken-1"><i className="material-icons">alarm_add</i></a></li>
-        <li><a className="btn-floating green"><i className="material-icons">Add Category</i></a></li>
-        <li><a className="btn-floating blue"><i className="material-icons">Set Number of Categories</i></a></li>
-      </ul>
-    {showForm()}  
+      <a className="waves-effect waves-light btn" onClick={toggleForm} style={{float: 'right'}}>game settings</a>
+      {showSettingsForm()}
+      {/* <a className="waves-effect waves-light btn" onClick={addCategories} >add a category</a> */}
     </div >
   )
 };

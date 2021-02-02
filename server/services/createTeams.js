@@ -1,28 +1,17 @@
 const mongoose = require('mongoose');
 const { uniqWith, isEqual, includes, remove, uniqBy } = require('lodash');
 const mockTeams = require('../data/mockTeams');
+const { appointTeams } = require('../services/randomize');
 const { mongoUrl } = require('../secrets');
 
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 
 const db = require('../models');
 
-
 async function createTeams(players, group) {
-  let teams = { Blue: [], Red: [], Green: [], Purple: [], Gold: [] };
-
-  const unique = uniqWith(players, isEqual);
-  const len = unique.length;
-  let noOfTeams = 0;
-
-  if (len < 6) {
-    noOfTeams = len;
-  }
-  if (len > 9) {
-    noOfTeams = 5;
-  } else {
-    noOfTeams = Math.floor(len / 2);
-  }
+  await clearTeams(group);
+  const unique = uniqBy(players, 'name');
+  const teams = await appointTeams(unique);
 
   while (unique.length) {
     for (let team in teams) {
@@ -49,21 +38,10 @@ async function createTeams(players, group) {
 }
 
 async function createMockTeams(players, group) {
-  let teams = { Blue: [], Red: [], Green: [], Purple: [], Gold: [] };
-  teams = mockTeams;
+  await clearTeams(group);
+  let teams = mockTeams;
   const unique = uniqBy(players, 'name');
-  const len = unique.length;
-  let noOfTeams = 0;
-
-  if (len < 6) {
-    noOfTeams = len;
-  }
-  if (len > 9) {
-    noOfTeams = 5;
-  } else {
-    noOfTeams = Math.floor(len / 2);
-  }
-
+  
   // load into same team to test team websocket.
   while (unique.length) {
     let eachUser = unique.splice(0, 1);
@@ -78,7 +56,6 @@ async function createMockTeams(players, group) {
       } else if (eachUser[0].name) {
         eachUser[0].team = 'Gold';
         if (includes(teams.Gold, curUser.name)) {
-          console.log( teams.Gold, )
           remove(teams.Gold, player => player.name === curUser.name)
         }
         teams.Gold.push(...eachUser);
@@ -93,7 +70,7 @@ async function createMockTeams(players, group) {
       );
     }
   }
-  updateGroups(teams, group);
+  await updateGroups(teams, group);
 
   return teams;
 }
@@ -101,23 +78,39 @@ async function createMockTeams(players, group) {
 async function updateGroups(teams, group) {
   await db.Group.findOneAndUpdate(
     { name: group },
-    teams,
+    {teams},
     { upsert: true },
     (err, doc) => {
       if (err) throw err;
-    })
+    }
+  ).then(() => console.log('updated groups'));
 }
 
 const getTeams = group => {
-    return new Promise((resolve, reject) => {
-      db.Group.find({name: group}, (err, doc) => {
-        if (err) {
-          reject(err);
-          throw err;
-        }
-        resolve(doc[0].teams);
-      });
-    })
+  return new Promise((resolve, reject) => {
+    db.Group.find({name: group}, (err, doc) => {
+      if (err) {
+        reject(err);
+        throw err;
+      }
+      resolve(doc[0].teams);
+    });
+  })
+}
+
+async function clearTeams(group) {
+  console.log('group:', group);
+  try {
+    await db.Team.deleteMany({ group }).then(() => console.log('data deleted'));
+  } catch (error) {
+    console.log('clearTeams db.Team', error);
+  }
+
+  db.Group.findOneAndUpdate(
+    { name: group }, { teams: {'black': 'heart'} }, (err, doc) => {
+      if (err) throw err;
+    }
+  ).then(() => console.log('teams removed from group'));
 }
 
 module.exports = { createMockTeams, createTeams, getTeams };

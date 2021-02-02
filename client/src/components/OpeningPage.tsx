@@ -40,7 +40,10 @@ const OpeningPage = () => {
   
   return (
     <>
-        <ControlButtons/>
+    <div className="adminBtns" style={styles.flexRow}>
+      <ControlButtons/>
+      <Settings />
+    </div>
     <div className="OpeningPage" style={openingStyle}>
       <div className="openingPageLeft" style={{width: '70vw'}}>
         <CategoryList/>
@@ -48,7 +51,6 @@ const OpeningPage = () => {
       </div>
       <div className="teamList" style={{ width: '25vw' }}>
         <TeamList/>
-        {/* <Settings /> */}
       </div>
     </div>
     </>

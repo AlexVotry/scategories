@@ -6,19 +6,19 @@ mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, us
 
 const db = require('../models');
 
-async function handleAnswers (answer) {
+async function handleAnswers (answer, group) {
   const team = {
     name: answer.team,
     answers: new Map(JSON.parse(answer.answers))
   }
   team.answers.delete(42); // built in a dummy answer to ensure all participants send and answer, (removing here)
 
-  const finalAnswers = await addTeam(team);
+  const finalAnswers = await addTeam(team, group);
   return finalAnswers;
 }
 
-async function getFinalAnswers () {
-    const allAnswers = await getAnswers();
+async function getFinalAnswers (group) {
+    const allAnswers = await getAnswers(group);
     const result = {};
 
     for (const [team, answerArray] of Object.entries(allAnswers)) {
@@ -42,7 +42,7 @@ async function getFinalAnswers () {
       };
 
       // return  object with team name, and new Map of finalAnswers
-      const response = await sendBestAnswer({ name: team, finalBest });
+      const response = await sendBestAnswer({ name: team, finalBest, group });
       result[team] = { answers: response.finalAnswers, score: response.score };
     }
     return result;
@@ -79,11 +79,11 @@ function compareTeamAnswers(teamAnswers, numOfCategories) {
   return teamAnswers;
 }
 
-function addTeam(team) {
+function addTeam(team, group) {
   return new Promise((resolve, reject) => {
     db.Team.findOneAndUpdate(
-      { name: team.name },
-      { $push: { answers: team.answers } },
+      { name: team.name, group },
+      { $push: { answers: team.answers }, group },
       { upsert: true, new: true },
       (err, doc) => {
         if (err) {
@@ -99,7 +99,7 @@ function addTeam(team) {
 function sendBestAnswer(team) {
   return new Promise((resolve, reject) => {
     db.Team.findOneAndUpdate(
-      { name: team.name },
+      { name: team.name, group: team.group },
       { finalAnswers: team.finalBest, answers: [] },
       { upsert: true, new: true },
       (err, doc) => {
@@ -113,10 +113,10 @@ function sendBestAnswer(team) {
   })
 }
 
-const updateScores = async scores => {
+const updateScores = async (scores, group) => {
   const { score, team } = scores;
   await db.Team.findOneAndUpdate(
-    { name: team },
+    { name: team, group },
     { score },
     { upsert: true },
     (err, doc) => {
@@ -125,9 +125,9 @@ const updateScores = async scores => {
   )
 }
 
-function getAnswers() {
+function getAnswers(group) {
   return new Promise((resolve, reject) => {
-    db.Team.find({}, (err, doc) => {
+    db.Team.find({ group }, (err, doc) => {
       if(err) {
         reject(err);
         throw err;
