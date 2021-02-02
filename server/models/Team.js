@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 
 const Team = new Schema({
   name: String,
+  group: String,
   answers: [{
     type: Map,
     of: String

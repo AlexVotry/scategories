@@ -4,16 +4,15 @@ const { getLetter, getCategories} = require('./randomize');
 
 let scattegories = categories;
 let letters = letter;
-let numOfCategories = 6;
 
-async function handleGame(io, socket, room, gameState, clock) {
-  let counter = clock;
+async function handleGame(io, socket, room, gameState, clock, numOfCategories) {
+  let timer = clock;
   if (gameState === 'pause') {
     console.log('pause game')
     // io.to(room).emit('gameState')
     return;
   }
-  if (counter > 0 && gameState === 'running') {
+  if (timer > 0 && gameState === 'running') {
     const letterArr = getLetter(letters);
     letters = letterArr[1];
     const currentLetter = letterArr[0];
@@ -22,31 +21,31 @@ async function handleGame(io, socket, room, gameState, clock) {
     const categories = catArr[0];
     const gameInfo = { currentLetter, categories};
     io.to(room).emit('newGame', gameInfo);
-    // counter = await runClock(counter, socket, io, room, gameState);
+    timer = await runClock(timer, socket, io, room, gameState);
   } else {
-    counter = clock;
+    timer = clock;
     io.to(room).emit('gameState', gameState);
   } 
 }
 
-function runClock(counter, socket, io, room, currState) {
+function runClock(timer, socket, io, room, currState) {
   let state = currState;
   // console.log('state:', state);
   // socket.on('pushPause', gameState => {
   //   state = gameState;
   //   console.log('runclock')
-  //   return handleGame(io, socket, room, gameState, counter);
+  //   return handleGame(io, socket, room, gameState, timer);
   // });
 
   if (state === 'running') {
-    if (counter >= 0) {
-      io.to(room).emit('Clock', counter);
+    if (timer >= 0) {
+      io.to(room).emit('Clock', timer);
     } else {
-      return handleGame(io, socket, room, 'ready', counter);
+      return handleGame(io, socket, room, 'ready', timer);
     }
-    counter--;
+    timer--;
     setTimeout(() => {
-      runClock(counter, socket, io, room, state);
+      runClock(timer, socket, io, room, state);
     }, 1000);
   } else {
     return;

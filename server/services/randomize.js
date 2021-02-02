@@ -1,9 +1,9 @@
 const getLetter = (letters) => {
   const index = getRandom(letters.length);
   const currentLetter = letters[index];
-
+  letters.splice(index, 1)
   // return the currentLetter and remove is from the array.
-  return [currentLetter, letters.splice(index, 1)];
+  return [currentLetter, letters];
 };
 
 const getCategories = (categoryList, numberOfCategories) => {
@@ -20,6 +20,30 @@ const getCategories = (categoryList, numberOfCategories) => {
 
 function getRandom(max) {
   return Math.floor(Math.random() * Math.floor(max));
+}
+
+function appointTeams (players) {
+  const blue = [];
+  const len = players.length;
+  const teams = {};
+  const teamNames = ["Blue", "Red", "Purple", "Green", "Gold"];
+
+  let noOfTeams = 0;
+
+  if (len < 6) {
+    noOfTeams = len;
+  }
+  if (len > 9) {
+    noOfTeams = 5;
+  } else {
+    noOfTeams = Math.floor(len / 2);
+  }
+
+  for (let i = 0; i < noOfTeams; i++) {
+    teams[teamNames[i]] = [];
+  }
+
+  return teams;
 }
 
 module.exports = { getLetter, getCategories };

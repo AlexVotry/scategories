@@ -22,7 +22,6 @@ const OtherPlayersCard = () => {
   const teams = useContext(TeamsContext);
   const team = teams[user.team];
   const others = findOthers(team, user);
-  console.log('win:', windowHeight, 'header:', headerHeight, 'card:', cardHeight);
   const otherCard = {
     ...styles.flexColumn,
     width: '55vw'
@@ -57,7 +56,6 @@ const OtherPlayersCard = () => {
     width: 500,
     height: windowHeight - headerHeight - cardHeight - 200
   }
-  console.log(scrollBarStyle);
   
   const renderOthers = () => {
     return others.map(({name}) => {
