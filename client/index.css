@@ -18,6 +18,14 @@ ol {
   border-bottom: 1px solid grey;
 }
 
+h4 {
+  margin: 10px 0 0 0;
+}
+
+.teamGreen input[type=text]:focus:not([readonly])+label{
+  color:#85144b;
+}
+
 .userMessage::before {
   content: "";
   width: 0px;
@@ -44,7 +52,7 @@ ol {
   bottom: -10px;
 }
 
-#letterHeader {
+#gameHeader {
   background-color: #222222;
   background: repeating-linear-gradient(45deg, #2b2b2b 0%, #2b2b2b 10%, #222222 0%, #222222 50%) 0 / 15px 15px;
   padding: 0 30px;

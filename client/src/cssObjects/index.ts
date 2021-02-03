@@ -30,7 +30,8 @@ export const styles = {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignItems: 'center'
+    alignItems: 'center',
+    height: '20vh'
   },
   hover: <CSSProperties> {
     display: 'block'
@@ -47,7 +48,8 @@ export const styles = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
-    marginTop: '10px'
+    marginTop: '10px',
+    height: '35vh'
   },
   speechBox: <CSSProperties> {
     borderStyle: 'solid',
@@ -62,6 +64,15 @@ export const styles = {
   },
   messageLabel: <CSSProperties> {
     fontWeight: 'bold',
-    fontColor: 'black'
+    fontColor: 'black',
+    cursor: 'help',
+    paddingLeft: '20px',
+    top: 0
+  },
+  btnRunning: <CSSProperties> {
+    heigth: '25px',
+    width: '7.5vw',
+    fontSize: '.85em',
+    marginRight: '2px'
   }
 }

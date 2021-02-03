@@ -15,9 +15,8 @@ import FinalAnswersContext from '../contexts/FinalAnswersContext';
 import TeamScoreContext from '../contexts/TeamScoreContext';
 
 function WebSocketUtility () {
-  // const localState = JSON.parse(localStorage.getItem("userInfo"));
   const localState = {};
-  const [teams, setTeams] = useState([]);
+  const [teams, setTeams] = useState({});
   const [myTeam, setMyTeam] = useState('');
   const [user, setUser] = useState(localState);
   const [gameState, setGameState] = useState('ready');

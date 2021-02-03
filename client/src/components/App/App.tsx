@@ -3,6 +3,7 @@ import React, {useContext} from 'react';
 import OpeningPage from '../OpeningPage';
 import CurrentPlayerCard from '../CurrentPlayerCard';
 import OtherPlayersCard from '../OtherPlayersCard';
+import ControlButtons from '../ControlButtons';
 import GameHeader from '../GameHeader';
 import UserAnswersContext from '../../contexts/UserAnswersContext';
 import GameStateContext from '../../contexts/GameStateContext';
@@ -23,6 +24,9 @@ const {userAnswers} = useContext(UserAnswersContext);
           <div className="appDisplayCards" style={styles.flexPlayers}>
               <CurrentPlayerCard />
               <OtherPlayersCard />
+          </div>
+          <div>
+            <ControlButtons />
           </div>
         </div>
       );

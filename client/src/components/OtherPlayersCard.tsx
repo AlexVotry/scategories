@@ -15,26 +15,27 @@ import socket from '../service/socketConnection';
 const OtherPlayersCard = () => {
   const [teammates, setTeammates] = useState([]);
   const [messages, setMessages] = useState([]);
-  const [cardHeight, setCardHeight] = useState(0);
-  const [headerHeight, setHeaderHeight] = useState(0);
-  const [windowHeight, setWindowHeight] = useState(0);
   const { user } = useContext(UserContext);
   const teams = useContext(TeamsContext);
   const team = teams[user.team];
   const others = findOthers(team, user);
+  
   const otherCard = {
-    ...styles.flexColumn,
-    width: '55vw'
+    ...styles.flexRow,
+    width: '65vw'
   }
+  
   const cardStyle = {
     ...styles.flexRow,
     backgroundColor: colors[user.team],
     color: colors.White,
-    padding: '10px'
+    padding: '5px',
+    height: '70vh',
+    width: '60%'
   }
   const listStyle = {
     alignItems: 'flex-start',
-    padding: '20px',
+    padding: '0 20px',
     width: '100%',
     border: '4px ridge white'
   }
@@ -53,8 +54,8 @@ const OtherPlayersCard = () => {
   }
   
   const scrollBarStyle = {
-    width: 500,
-    height: windowHeight - headerHeight - cardHeight - 200
+    width: '40%',
+    height: '70vh'
   }
   
   const renderOthers = () => {
@@ -86,9 +87,6 @@ const OtherPlayersCard = () => {
   useEffect (() => {
     let mounted = true;
     if (mounted) {
-      setCardHeight(document.getElementById('otherPlayers').clientHeight);
-      setHeaderHeight(document.getElementById('leaderboard').clientHeight);
-      setWindowHeight(window.innerHeight);
       socket.on('updateMessage', newMessages => {
         setMessages(arr => [...arr, newMessages]);
       });
@@ -98,14 +96,14 @@ const OtherPlayersCard = () => {
 
   return (
     <div className="otherCard" style={otherCard}>
-      <div id="otherPlayers" className="otherPlayers" style={cardStyle} >
-        {renderOthers()}
-      </div>
       <Scrollbars style={scrollBarStyle} >
         <div className="messages" style={styles.messages}>
           {showMessages()}
         </div>
       </Scrollbars>
+      <div id="otherPlayers" className="otherPlayers" style={cardStyle} >
+        {renderOthers()}
+      </div>
     </div>
   )
 }
