@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 // const { User } = require('./models');
 const { mongoUrl } = require('./secrets');
 
-const handleGame = require('./services/handleGame');
-const { handleAnswers, getFinalAnswers, compareTeamAnswers, updateScores} = require('./services/handleAnswers');
+const {handleGame, pauseGame, resetGame } = require('./services/handleGame');
+const { handleAnswers, getFinalAnswers, compareTeamAnswers, updateScores, resetScores} = require('./services/handleAnswers');
 const {createMockTeams, createTeams, getTeams } = require('./services/createTeams');
 const {keysIn , isEqual} = require('lodash');
 const uri = mongoUrl;
@@ -17,7 +17,7 @@ let totalPlayers;
 let totalTeams;
 let timer = 6;
 let myTeam;
-let numOfCategories = 6;
+let numOfCategories = 12;
 let teamNames;
 let count = totalPlayers;
 let teamGroup;
@@ -57,13 +57,25 @@ function socketMain(io, socket) {
 
   socket.on('changeGameState', (gameState) => {
     io.to(room).emit('gameState', gameState);
+    handleGame(io, room, timer, numOfCategories, gameState);
+
     if (gameState === 'running') {
+      // at start of game, add 0 to end of team.
       teamNames.forEach(name => {
         teams[name].splice(-1, 1, 0);
       });
-    };
-    handleGame(io, socket, room, gameState, timer, numOfCategories);
+    }
+    if (gameState === 'startOver') resetScores();
   });
+
+  socket.on('pushPause', pause => {
+    pauseGame();
+  });
+
+  socket.on('reset', reset => {
+    resetGame(timer);
+    handleGame(io, room, timer, numOfCategories, 'running');
+  })
 
   // during active play join (team); between play join (room);
   socket.on('myTeam', team => {
@@ -71,6 +83,7 @@ function socketMain(io, socket) {
     myTeam = team;
   });
 
+  // every guess goes to the teammates to see.
   socket.on('newGuess', newGuesses => {
     const { guesses, team } = newGuesses;
     io.to(team).emit('updateAnswers', guesses);
@@ -80,11 +93,14 @@ function socketMain(io, socket) {
     io.to(messages.team).emit('updateMessage', messages);
   });
   
+  // times up! everyone submits answer. 
   socket.on('FinalAnswer', async finalAnswers => {  
     await handleAnswers(finalAnswers, teamGroup);
     count--;
     if (!count) {
+      // determine best answer for each team
       const teamAnswers = await getFinalAnswers(teamGroup);
+      // compare team's answer to each other and cross out duplicates.
       const finalAnswers = await compareTeamAnswers(teamAnswers, numOfCategories)
       io.to(room).emit('AllSubmissions', finalAnswers);
       count = totalPlayers;
@@ -102,10 +118,12 @@ function socketMain(io, socket) {
     } 
   });
 
+  // if someone disagrees with an answer and the cross it out.
   socket.on('failedAnswer', finalAnswers => {
     io.to(teamGroup).emit('AllSubmissions', finalAnswers)
   });
 
+  // settings button determine length of time and number of categories
   socket.on('gameChoices', gameChoices => {
     numOfCategories = gameChoices.categories || numOfCategories;
     timer = gameChoices.timer * 60;

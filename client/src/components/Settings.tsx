@@ -8,11 +8,16 @@ import socket from '../service/socketConnection';
 const Settings = () => {
   const { user } = useContext(UserContext);
   const [display, setDisplay] = useState("none");
-  const [categories, setCategories] = useState(6);
-  const [timer, setTimer] = useState(12);
+  const [categories, setCategories] = useState(12);
+  const [timer, setTimer] = useState(3);
+  const [disabled, setDisabled] = useState(true);
 
   const settingsStyle = {
     display: display
+  }
+
+  const btnStyle = {
+    backgroundColor: disabled,
   }
   
   const toggleForm = () => {
@@ -28,9 +33,10 @@ const Settings = () => {
     setDisplay('none');
     socket.emit('gameChoices', {timer, categories});
   }
-
+  
   const handleChange = (e, state) => {
     state === "timer" ? setTimer(e.target.value) : setCategories(e.target.value);
+    setDisabled(false);
   }
 
   function showSettingsForm () {
@@ -59,7 +65,7 @@ const Settings = () => {
             <option value="6">6 categories</option>
           </select>
         </div >
-        <button className="waves-effect waves-light btn-small" type="submit" >submit</button>
+        <button className="settingsButton" disabled={disabled} type="submit">submit</button>
       </form>
     )
   }

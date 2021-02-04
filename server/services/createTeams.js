@@ -99,7 +99,6 @@ const getTeams = group => {
 }
 
 async function clearTeams(group) {
-  console.log('group:', group);
   try {
     await db.Team.deleteMany({ group }).then(() => console.log('data deleted'));
   } catch (error) {

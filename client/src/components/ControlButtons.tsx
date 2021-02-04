@@ -27,30 +27,29 @@ const ControlButtons = () => {
   const btnStyle = gameState === 'running' ? runningBtns : otherBtns;
 
   const start = () => {
-    // buttons.startGame();
     socket.emit('changeGameState', 'running');
   }
-  const stop = () => {
-    // buttons.stopGame();
+  const pause = () => {
     socket.emit('pushPause', 'paused');
   }
   const reset = () => {
-    // buttons.resetEverything();
-    socket.emit('changeGameState', 'reset');
+    socket.emit('reset', 'reset');
+  }
+  const startOver = () => {
+    socket.emit('changeGameState', 'startOver');
   }
 
   const createTeams = () => {
     socket.emit('createTeams', true);
-    // buttons.createTeams();
   }
-  // disabled: <a class="btn disabled">Button</a>
+  
   if (!user.admin) return <div></div>;
   return (
     <div className="btnGroup">
       <a className="waves-effect waves-light btn" onClick={start} style={btnStyle}>Start</a>
-      <a className="waves-effect waves-light btn" onClick={stop} style={btnStyle}>Stop</a>
+      <a className="waves-effect waves-light btn" onClick={pause} style={btnStyle}>Pause</a>
       <a className="waves-effect waves-light btn" onClick={reset} style={btnStyle}>Reset Round</a>
-      <a className="waves-effect waves-light btn disabled" onClick={start} style={btnStyle}>Reset Game</a>
+      <a className="waves-effect waves-light btn disabled" onClick={startOver} style={btnStyle}>Reset Game</a>
       <a className="waves-effect waves-light btn" onClick={createTeams} style={teamBtn} >Create Teams</a>
     </div>
   )

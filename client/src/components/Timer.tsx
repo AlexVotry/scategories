@@ -23,7 +23,7 @@ const Timer = () => {
   }
   const minutes = Math.floor(timer / 60);
   const min = minutes > 0 ? `${minutes} : ` : '';
-  const seconds = pad(timer % 60).toString().split('');
+  const seconds = timer === 0 ? ' ' : pad(timer % 60).toString().split('');
 
   return (
     <div className="timer">
