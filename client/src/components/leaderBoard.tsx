@@ -6,14 +6,22 @@ import { styles, colors } from '../cssObjects';
 
 function LeaderBoard(): JSX.Element {
   const [teamScores, setTeamScores] = TeamScoreContext.useTeamScore();
-  const leaderboard = getLeader(teamScores); // returns [team, score];
-  // const leaderboard = [
-  //   ['Blue', 27],
-  //   ['Red', 22],
-  //   ['Green', 20],
-  //   ['Gold', 18],
-  //   ['Purple', 10]
-  // ]
+  // const leaderboard = getLeader(teamScores); // returns [team, score];
+  const leaderboard = [
+    ['Blue', 27],
+    ['Red', 22],
+    ['Green', 20],
+    ['Gold', 18],
+    ['Purple', 10]
+  ]
+
+  const leaderStyle = {
+    ...styles.flexColumn,
+    justifyContent: 'center',
+    height: '20vh',
+    flexWrap: 'wrap',
+    width: '300px'  
+  }
 
   const displayLeaderBoard = () => {
     if (!leaderboard.length) return <div></div>;
@@ -24,7 +32,7 @@ function LeaderBoard(): JSX.Element {
   }
 
   return (
-    <div id="leaderboard" className="leaderBoard" style={ styles.flexColumn }>
+    <div id="leaderboard" className="leaderBoard" style={leaderStyle}>
       {displayLeaderBoard()}
     </div>
   );

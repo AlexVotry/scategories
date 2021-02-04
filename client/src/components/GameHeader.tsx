@@ -9,7 +9,7 @@ function GameHeader(): JSX.Element {
 
   return (
     <>
-      <div id="letterHeader" style={styles.flexHeader}>
+      <div id="gameHeader" style={styles.flexHeader}>
         <LeaderBoard/>
         <Letter />
         <Timer />

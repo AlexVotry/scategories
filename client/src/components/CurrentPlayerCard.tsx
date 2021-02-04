@@ -12,11 +12,14 @@ import { styles, colors } from '../cssObjects';
 const CurrentPlayerCard = () => {
   const {user} = useContext(UserContext);
   const teams = useContext(TeamsContext);
+  const textColor = user.team === 'Gold' ? colors.Green : colors.White;
   const cardStyle = {
     backgroundColor: colors[user.team],
-    color: colors.White,
+    color: textColor,
     marginRight: '10px',
-    padding: '10px'
+    padding: '10px 10px 0 10px',
+    height: '70vh',
+    width: '35vw'
   }
   const team = teams[user.team];
 
@@ -25,7 +28,6 @@ const CurrentPlayerCard = () => {
       <div className="gameCard" style={cardStyle} >
         <GameSheet />
       </div>
-      <ControlButtons />
     </div>
   )
 }

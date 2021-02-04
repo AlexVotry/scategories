@@ -125,6 +125,17 @@ const updateScores = async (scores, group) => {
   )
 }
 
+const resetScores = async (group) => {
+  const { score, team } = scores;
+  await db.Group.updateMany(
+    { group },
+    { score: 0 },
+    (err, doc) => {
+      if (err) throw err;
+    }
+  )
+}
+
 function getAnswers(group) {
   return new Promise((resolve, reject) => {
     db.Team.find({ group }, (err, doc) => {
@@ -160,4 +171,4 @@ function pad(d) {
   return (d < 10) ? '0' + d.toString() : d.toString();
 }
 
-module.exports = { handleAnswers, getFinalAnswers, compareTeamAnswers, updateScores };
+module.exports = { handleAnswers, getFinalAnswers, compareTeamAnswers, updateScores, resetScores };

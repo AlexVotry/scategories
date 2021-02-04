@@ -15,13 +15,12 @@ import FinalAnswersContext from '../contexts/FinalAnswersContext';
 import TeamScoreContext from '../contexts/TeamScoreContext';
 
 function WebSocketUtility () {
-  // const localState = JSON.parse(localStorage.getItem("userInfo"));
   const localState = {};
-  const [teams, setTeams] = useState([]);
+  const [teams, setTeams] = useState({});
   const [myTeam, setMyTeam] = useState('');
   const [user, setUser] = useState(localState);
   const [gameState, setGameState] = useState('ready');
-  const [timer, setTimer] = useState(6);
+  const [timer, setTimer] = useState(0);
   const [currentLetter, setCurrentLetter] = useState('');
   const [categories, setCategories] = useState([]);
   const [finalAnswers, setFinalAnswers] = useState({})
