@@ -48,10 +48,12 @@ const GameSheet = () => {
     if (answers.has(index)) answers.delete(index);
     setAnswers(new Map(answers.set(index, val)));
     const i = `${pad(index)}_${name}`;
-    if (!others.length) updateUserAnswers(i, val);
-    // updateUserAnswers(i, val);
-    const guesses = { answers: [i, val], name };
-    // socket.emit('newGuess', {guesses, team});
+    if (!others.length) {
+      updateUserAnswers(i, val);
+    } else {
+      const guesses = { answers: [i, val], name };
+      socket.emit('newGuess', {guesses, team});
+    }
   }
 
   const updateMessage = e => {

@@ -8,7 +8,6 @@ import UserContext from '../contexts/UserContext';
 import TeamsContext from '../contexts/TeamsContext';
 import LetterContext from '../contexts/LetterContext';
 import CategoryContext from '../contexts/CategoryContext';
-import { resetAnswersAndScores } from '../service/reset';
 import GameStateContext from '../contexts/GameStateContext';
 import UserAnswersContext from '../contexts/UserAnswersContext';
 import FinalAnswersContext from '../contexts/FinalAnswersContext';
@@ -23,11 +22,8 @@ function WebSocketUtility() {
   const [userPrev, setUserPrev] = useState({});
   const [gameState, setGameState] = useState('ready');
   const [prevGameState, setprevGameState] = useState('');
-  // const [timer, setTimer] = useState(0);
   const [currentLetter, setCurrentLetter] = useState('');
   const [categories, setCategories] = useState([]);
-  const [finalAnswers, setFinalAnswers] = useState({});
-  const [prevFinalAnswers, setPrevFinalAnswers] = useState({ empty: 0 });
   const [userAnswers, setUserAnswers] = useState(new Map());
 
   const update = user => setUser(user);
@@ -41,7 +37,6 @@ function WebSocketUtility() {
 
   if (!isEqual(user, userPrev)) {
     socket.on('currentUser', newUser => {
-      // console.log('NewUser', newUser, user);
       if (!isEmpty(newUser)) {
         setUser(newUser);
         setUserPrev(newUser);
@@ -54,11 +49,12 @@ function WebSocketUtility() {
     setCurrentLetter(gameInfo.currentLetter);
   });
 
-  if (!isEqual(prevTeams, teams)) {
-    setprevTeams(teams);
+  // if (!isEqual(prevTeams, teams)) {
+    // setprevTeams(teams);
     socket.on('newTeams', newTeams => {
       setTeams(newTeams);
-      const localState = JSON.parse(localStorage.getItem("userInfo"));
+      // const localState = JSON.parse(localStorage.getItem("userInfo"));
+      const localState = user;
       const team = !isEmpty(localState) ? assignTeam(newTeams, localState) : null;
       const newUser = { ...localState, team };
       setUser(newUser);
@@ -67,7 +63,7 @@ function WebSocketUtility() {
       localStorage.removeItem('userInfo');
       localStorage.setItem('userInfo', JSON.stringify(newUser));
     }).emit('myTeam', user.team);
-  }
+  // }
 
   if (!isEqual(prevGameState, gameState)) {
     setprevGameState(gameState);
@@ -76,46 +72,19 @@ function WebSocketUtility() {
     });
   }
 
-  socket.on('AllSubmissions', finalSubmissions => {
-  const teamArray = Object.keys(finalSubmissions);
-      setGameState('ready');
-
-      teamArray.forEach(team => {
-        const teamAnswers = finalSubmissions[team].answers;
-
-        if (typeof teamAnswers === 'string') {
-          finalSubmissions[team].answers = new Map(JSON.parse(finalSubmissions[team].answers));
-        }
-      })
-      setFinalAnswers(finalSubmissions);
-    });
-
-  if (!isEqual(prevFinalAnswers, finalAnswers)) {
-    socket.on('startOver', numOfCategories => {
-      const answerMap = resetAnswersAndScores(numOfCategories);
-      const teamArray = Object.keys(teams);
-      let finalSubs = {};
-      teamArray.forEach(team => {
-        finalSubs = { ...finalSubs, [team]: { answers: answerMap, score: 0 } }
-      });
-      setFinalAnswers(finalSubs);
-      setGameState('ready');
-    })
-  }
-
   return (
     <UserContext.Provider value={{ user, update }}>
       <TeamsContext.Provider value={teams}>
         <CategoryContext.Provider value={categories}>
           <LetterContext.Provider value={currentLetter}>
             <GameStateContext.Provider value={gameState}>
-              <FinalAnswersContext.Provider value={finalAnswers}>
+              <FinalAnswersContext.FinalAnswersProvider>
                 <TeamScoreContext.TeamScoreProvider>
                   <UserAnswersContext.Provider value={{ userAnswers, updateUA }}>
                     <App myTeam={myTeam} />
                   </UserAnswersContext.Provider>
                 </TeamScoreContext.TeamScoreProvider>
-              </FinalAnswersContext.Provider>
+              </FinalAnswersContext.FinalAnswersProvider>
             </GameStateContext.Provider>
           </LetterContext.Provider>
         </CategoryContext.Provider>

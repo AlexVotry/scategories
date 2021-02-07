@@ -1,29 +1,30 @@
 // create scategory list.
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useRef, useEffect } from 'react';
 import CategoryContext from '../contexts/CategoryContext';
-import FinalAnswersContext from '../contexts/FinalAnswersContext';
 import UserContext from '../contexts/UserContext';
+import FinalAnswersContext from '../contexts/FinalAnswersContext';
 import TeamScoreContext from '../contexts/TeamScoreContext';
 import socket from '../service/socketConnection';
+import { resetAnswersAndScores } from '../service/reset';
 import {pad, stringify, newMap} from '../service/strings';
 import {colors, styles} from '../cssObjects';
 import { isEmpty, isEqual } from 'lodash';
-import { teamAnswer, categoryList } from '../service/reset.js';
 
 const CategoryList = () => {
   // const list = categoryList;  //mock data
   // const finalAnswers = teamAnswer; //mock data
   const list = useContext(CategoryContext);
-  const finalAnswers = useContext(FinalAnswersContext);
+  const [finalAnswers, setFinalAnswers] = FinalAnswersContext.useFinalAnswers();
   const {user} = useContext(UserContext);
   const [teamScores, setTeamScores] = TeamScoreContext.useTeamScore();
-  const [score, setScore] = useState({});
+  // const [score, setTeamScores] = useState({});
   let teamAnswers = Object.keys(finalAnswers);
   const columns = Math.floor(12 / (teamAnswers.length + 1));
   const col = `col s${columns}`;
   const teamTotals = {};
-  const allTeamsScore = {};
+  let startOverAnswers = {};
+  const mountedRef = useRef(true)
 
   const makeHeaders = () => {
     console.log('categoryList')
@@ -65,7 +66,7 @@ const CategoryList = () => {
     const ans = `!${answer}`;
     finalAnswers[team].answers.set(index, ans);
     teamTotals[team] = teamTotals[team] - 1;
-    setScore(teamTotals);
+    setTeamScores(teamTotals);
     serialize();
     socket.emit('failedAnswer', finalAnswers);
     deserialize()
@@ -100,13 +101,14 @@ const CategoryList = () => {
   }
 
   const showTeamTotals = () => {
-    if (!isEqual(teamTotals, score)) {
-      setScore(teamTotals);
+    if (!isEqual(teamTotals, teamScores)) {
+      setTeamScores(teamTotals);
     }
+    socket.emit('updateScores', { score: teamTotals[user.team], team: user.team });
     return teamAnswers.map((team) => {
       const currentScore = teamTotals[team] || 0;
       const total = finalAnswers[team].score + (currentScore);
-      allTeamsScore[team] = total;
+      teamTotals[team] = total;
       return (
         <div className={col} key={team} style={{ color: colors[team] }}>
           <div>Current: { currentScore }</div>
@@ -115,16 +117,35 @@ const CategoryList = () => {
       )
     });
   }
-  
+  // socket.on('AllSubmissions', finalSubmissions => {
+  //   const teamArray = Object.keys(finalSubmissions);
+  //   teamArray.forEach(team => {
+  //     const teamAnswers = finalSubmissions[team].answers;
+
+  //     if (typeof teamAnswers === 'string') {
+  //       finalSubmissions[team].answers = new Map(JSON.parse(finalSubmissions[team].answers));
+  //     }
+  //   })
+  //   setFinalAnswers(finalSubmissions);
+  // });
+
+  // socket.on('startOver', numOfCategories => {
+  //   const answerMap = resetAnswersAndScores(numOfCategories);
+  //   teamAnswers.forEach(team => {
+  //     startOverAnswers = { ...startOverAnswers, [team]: { answers: answerMap, score: 0 } }
+  //   });
+  //   console.log('finalA:')
+  //   setFinalAnswers(startOverAnswers);
+  // })
 
   useEffect(() => {
-    if (isEmpty(teamTotals)) return;
-    setTeamScores(allTeamsScore);
-    console.log('teamScores:', teamScores, allTeamsScore);
-    socket.emit('updateScores', { score: allTeamsScore[user.team], team: user.team });
-  }, [finalAnswers]);
+    return () => {
+      mountedRef.current = false
+    }
+  }, [])
 
   if (list.length) {
+  // return useMemo(() => {
     return (
       <div className="categoryList container" style={{ marginTop: '20px'}}>
         <div className="row hr">
@@ -138,7 +159,8 @@ const CategoryList = () => {
         </div>
       </div>
     )
-  } 
+  // }, [teamScores]) 
+}
   return <div></div>
 
 }

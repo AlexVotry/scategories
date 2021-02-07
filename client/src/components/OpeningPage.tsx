@@ -2,24 +2,30 @@
 
 import React, { useContext } from 'react';
 
-import Letter from './Letter/Letter';
 import CategoryList from './CategoryList';
 import ControlButtons from './ControlButtons';
 import Settings from './Settings';
 import JoinTeam from './JoinTeam';
 import TeamList from './TeamList';
 import UserContext from '../contexts/UserContext';
+import FinalAnswersContext from '../contexts/FinalAnswersContext';
+import TeamScoreContext from '../contexts/TeamScoreContext';
+
+import socket from '../service/socketConnection';
+import { resetAnswersAndScores } from '../service/reset'
 import {styles} from '../cssObjects';
-import GameStateContext from '../contexts/GameStateContext';
 import { isEmpty } from 'lodash';
 
 const OpeningPage = () => {
-  const {user} = useContext(UserContext);
+  const [finalAnswers, setFinalAnswers] = FinalAnswersContext.useFinalAnswers();
+  const { user } = useContext(UserContext);
+  const [teamScores, setTeamScores] = TeamScoreContext.useTeamScore();
+  let startOverAnswers = {};
+  
   const openingStyle = {
     ...styles.flexRow,
     padding: '0 30px' 
   }
-  // const gameState = useContext(GameStateContext);
 
   const joinTeam = () => {
     if (!isEmpty(user)) return null;
@@ -37,6 +43,28 @@ const OpeningPage = () => {
         </>
       )
   }
+
+  socket.on('AllSubmissions', finalSubmissions => {
+    const teamArray = Object.keys(finalSubmissions);
+    teamArray.forEach(team => {
+      const teamAnswers = finalSubmissions[team].answers;
+
+      if (typeof teamAnswers === 'string') {
+        finalSubmissions[team].answers = new Map(JSON.parse(finalSubmissions[team].answers));
+      }
+    })
+    setFinalAnswers(finalSubmissions);
+  });
+
+  socket.on('startOver', numOfCategories => {
+    const answerMap = resetAnswersAndScores(numOfCategories);
+    const teamArray = Object.keys(teamScores);
+    teamArray.forEach(team => {
+      startOverAnswers = { ...startOverAnswers, [team]: { answers: answerMap, score: 0 } }
+    });
+    console.log('finalA:')
+    setFinalAnswers(startOverAnswers);
+  })
   
   return (
     <>

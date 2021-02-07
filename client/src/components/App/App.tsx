@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 
 import OpeningPage from '../OpeningPage';
 import CurrentPlayerCard from '../CurrentPlayerCard';
@@ -23,6 +23,11 @@ function App({ myTeam }): JSX.Element {
     socket.emit('FinalAnswer', { team: myTeam, answers: final });
     userAnswers.clear();
   }
+
+  useEffect(() => {
+    let mounted = true;
+    return () => mounted = false;
+  }, []);
 
   const showCorrectPage = () => {
     console.log('app')

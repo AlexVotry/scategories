@@ -49,7 +49,7 @@ function socketMain(io, socket) {
   });
 
   socket.on('createTeams', async data => {
-    teams = await createTeams(players, teamGroup);
+    teams = await createMockTeams(players, teamGroup);
     totalPlayers = count = players.length;
     assignTeams(teams);
     console.log('createTeams', data);
@@ -57,7 +57,8 @@ function socketMain(io, socket) {
   });
 
   socket.on('changeGameState', (gameState) => {
-    io.to(room).emit('gameState', gameState);
+    const gState = gameState === 'startOver' ? 'ready' : gameState;
+    io.to(room).emit('gameState', gState);
     handleGame(io, room, timer, numOfCategories, gameState);
 
     if (gameState === 'running') {
