@@ -56,7 +56,7 @@ const OthersGameSheet = (props) => {
       </>
     )
   }
-  const updateUserAnswers = (i: string, value: string) => {
+  const updateUserAnswers = (i: number, value: string) => {
     const index = pad(i);
     const temp = userAnswers.userAnswers;
     if (temp.has(index)) temp.delete(index);
@@ -64,13 +64,12 @@ const OthersGameSheet = (props) => {
     userAnswers.updateUA(temp);
   }
 
-  const updateOtherAnswers = (index: string, value: string) => {
+  const updateOtherAnswers = (index: number, value: string) => {
     if (guesses.has(index)) guesses.delete(index);
     setGuesses(new Map(guesses.set(index, value)));
   }
   
   useEffect(() => {
-    console.log('useEffect')
     let mounted = true;
     if (mounted) {
       updateUserAnswers(42, 'no answer');

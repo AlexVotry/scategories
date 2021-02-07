@@ -8,7 +8,7 @@ import UserContext from '../contexts/UserContext';
 import TeamsContext from '../contexts/TeamsContext';
 import LetterContext from '../contexts/LetterContext';
 import CategoryContext from '../contexts/CategoryContext';
-// import TimerContext from '../contexts/TimerContext';
+import { resetAnswersAndScores } from '../service/reset';
 import GameStateContext from '../contexts/GameStateContext';
 import UserAnswersContext from '../contexts/UserAnswersContext';
 import FinalAnswersContext from '../contexts/FinalAnswersContext';
@@ -32,20 +32,12 @@ function WebSocketUtility() {
 
   const update = user => setUser(user);
   const updateUA = answers => setUserAnswers(answers);
-  // const updateScore = teamScore => setTeamScore(teamScore);
-  // const divvyTeams = teams => this.setState({ teams });
 
-  // useEffect(() => {
-  //   initialize();
-  // }, [user, teams]);
-
-  // const initialize = () => {
-
-    socket.on('initUser', info => {
-      setUser(info.currentUser);
-      setMyTeam(user.team);
-      setTeams(info.teams)
-    });
+  socket.on('initUser', info => {
+    setUser(info.currentUser);
+    setMyTeam(user.team);
+    setTeams(info.teams)
+  });
 
   if (!isEqual(user, userPrev)) {
     socket.on('currentUser', newUser => {
@@ -57,10 +49,10 @@ function WebSocketUtility() {
     })
   }
 
-    socket.on('newGame', gameInfo => {
-      setCategories(gameInfo.categories);
-      setCurrentLetter(gameInfo.currentLetter);
-    });
+  socket.on('newGame', gameInfo => {
+    setCategories(gameInfo.categories);
+    setCurrentLetter(gameInfo.currentLetter);
+  });
 
   if (!isEqual(prevTeams, teams)) {
     setprevTeams(teams);
@@ -84,42 +76,47 @@ function WebSocketUtility() {
     });
   }
 
-    // socket.on('Clock', clock => {
-    //   setTimer(clock);
-    // });
+  socket.on('AllSubmissions', finalSubmissions => {
+  const teamArray = Object.keys(finalSubmissions);
+      setGameState('ready');
 
-    socket.on('AllSubmissions', finalSubmissions => {
-    const teamArray = Object.keys(finalSubmissions);
-        setGameState('ready');
+      teamArray.forEach(team => {
+        const teamAnswers = finalSubmissions[team].answers;
 
-        teamArray.forEach(team => {
-          const teamAnswers = finalSubmissions[team].answers;
+        if (typeof teamAnswers === 'string') {
+          finalSubmissions[team].answers = new Map(JSON.parse(finalSubmissions[team].answers));
+        }
+      })
+      setFinalAnswers(finalSubmissions);
+    });
 
-          if (typeof teamAnswers === 'string') {
-            finalSubmissions[team].answers = new Map(JSON.parse(finalSubmissions[team].answers));
-          }
-        })
-        setFinalAnswers(finalSubmissions);
+  if (!isEqual(prevFinalAnswers, finalAnswers)) {
+    socket.on('startOver', numOfCategories => {
+      const answerMap = resetAnswersAndScores(numOfCategories);
+      const teamArray = Object.keys(teams);
+      let finalSubs = {};
+      teamArray.forEach(team => {
+        finalSubs = { ...finalSubs, [team]: { answers: answerMap, score: 0 } }
       });
-
-  // }
+      setFinalAnswers(finalSubs);
+      setGameState('ready');
+    })
+  }
 
   return (
     <UserContext.Provider value={{ user, update }}>
       <TeamsContext.Provider value={teams}>
         <CategoryContext.Provider value={categories}>
           <LetterContext.Provider value={currentLetter}>
-            {/* <TimerContext.Provider value={timer}> */}
-              <GameStateContext.Provider value={gameState}>
-                <FinalAnswersContext.Provider value={finalAnswers}>
-                  <TeamScoreContext.TeamScoreProvider>
-                    <UserAnswersContext.Provider value={{ userAnswers, updateUA }}>
-                      <App myTeam={myTeam} />
-                    </UserAnswersContext.Provider>
-                  </TeamScoreContext.TeamScoreProvider>
-                </FinalAnswersContext.Provider>
-              </GameStateContext.Provider>
-            {/* </TimerContext.Provider> */}
+            <GameStateContext.Provider value={gameState}>
+              <FinalAnswersContext.Provider value={finalAnswers}>
+                <TeamScoreContext.TeamScoreProvider>
+                  <UserAnswersContext.Provider value={{ userAnswers, updateUA }}>
+                    <App myTeam={myTeam} />
+                  </UserAnswersContext.Provider>
+                </TeamScoreContext.TeamScoreProvider>
+              </FinalAnswersContext.Provider>
+            </GameStateContext.Provider>
           </LetterContext.Provider>
         </CategoryContext.Provider>
       </TeamsContext.Provider>

@@ -14,8 +14,15 @@ import { styles } from '../../cssObjects';
 import { stringify } from '../../service/strings';
 
 function App({ myTeam }): JSX.Element {
-const gameState = useContext(GameStateContext);
-const {userAnswers} = useContext(UserAnswersContext);
+  const gameState = useContext(GameStateContext);
+  const {userAnswers} = useContext(UserAnswersContext);
+
+    // send answers to server
+  if (gameState === 'ready' && userAnswers.size) {
+    const final = stringify(userAnswers);
+    socket.emit('FinalAnswer', { team: myTeam, answers: final });
+    userAnswers.clear();
+  }
 
   const showCorrectPage = () => {
     console.log('app')
@@ -33,19 +40,11 @@ const {userAnswers} = useContext(UserAnswersContext);
         </div>
       );
     } 
-    // send answers to server
-    if (gameState === 'ready' && userAnswers.size) {
-      console.log('answer:', userAnswers);
-      const final = stringify(userAnswers);
-      socket.emit('FinalAnswer', { team: myTeam, answers: final });
-      userAnswers.clear();
-    }
 
     return <OpeningPage/>;
   }
 
-return showCorrectPage();
-
+  return showCorrectPage();
 }
 
 export default App;

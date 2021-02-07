@@ -115,6 +115,7 @@ const CategoryList = () => {
       )
     });
   }
+  
 
   useEffect(() => {
     if (isEmpty(teamTotals)) return;
