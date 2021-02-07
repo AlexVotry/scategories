@@ -126,8 +126,7 @@ const updateScores = async (scores, group) => {
 }
 
 const resetScores = async (group) => {
-  const { score, team } = scores;
-  await db.Group.updateMany(
+  await db.Team.updateMany(
     { group },
     { score: 0 },
     (err, doc) => {

@@ -49,9 +49,10 @@ function socketMain(io, socket) {
   });
 
   socket.on('createTeams', async data => {
-    teams = await createMockTeams(players, teamGroup);
+    teams = await createTeams(players, teamGroup);
     totalPlayers = count = players.length;
     assignTeams(teams);
+    console.log('createTeams', data);
     io.to(room).emit('newTeams', teams);
   });
 
@@ -65,7 +66,10 @@ function socketMain(io, socket) {
         teams[name].splice(-1, 1, 0);
       });
     }
-    if (gameState === 'startOver') resetScores();
+    if (gameState === 'startOver') {
+      resetScores(teamGroup);
+      io.to(room).emit('startOver', numOfCategories);
+    }
   });
 
   socket.on('pushPause', pause => {

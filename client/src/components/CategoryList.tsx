@@ -9,7 +9,7 @@ import socket from '../service/socketConnection';
 import {pad, stringify, newMap} from '../service/strings';
 import {colors, styles} from '../cssObjects';
 import { isEmpty, isEqual } from 'lodash';
-import { teamAnswer, categoryList } from '../data/categoryList.js';
+import { teamAnswer, categoryList } from '../service/reset.js';
 
 const CategoryList = () => {
   // const list = categoryList;  //mock data
@@ -26,6 +26,7 @@ const CategoryList = () => {
   const allTeamsScore = {};
 
   const makeHeaders = () => {
+    console.log('categoryList')
     return teamAnswers.map((team) => {
       teamAnswers[team] = 0; // reset teamAnswer to 0 everytime we refresh.
       return (
@@ -120,7 +121,7 @@ const CategoryList = () => {
     setTeamScores(allTeamsScore);
     console.log('teamScores:', teamScores, allTeamsScore);
     socket.emit('updateScores', { score: allTeamsScore[user.team], team: user.team });
-  }, [score]);
+  }, [finalAnswers]);
 
   if (list.length) {
     return (

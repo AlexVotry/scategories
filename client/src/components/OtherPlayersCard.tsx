@@ -13,6 +13,7 @@ import { findOthers } from '../service/parseTeams';
 import socket from '../service/socketConnection';
 
 const OtherPlayersCard = () => {
+  console.log('otherplayingcard')
   const [teammates, setTeammates] = useState([]);
   const [messages, setMessages] = useState([]);
   const { user } = useContext(UserContext);

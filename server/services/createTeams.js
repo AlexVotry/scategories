@@ -11,8 +11,8 @@ const db = require('../models');
 async function createTeams(players, group) {
   await clearTeams(group);
   const unique = uniqBy(players, 'name');
-  const teams = await appointTeams(unique);
-
+  let teams = await appointTeams(unique);
+  
   while (unique.length) {
     for (let team in teams) {
       let eachUser = unique.splice(0, 1);

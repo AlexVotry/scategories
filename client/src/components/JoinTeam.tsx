@@ -24,15 +24,20 @@ const JoinTeam = () => {
     setCheckedIn(e.target.checked);
     socket.emit('initJoin', localState);
     user.update(localState);
+    console.log(localState)
   }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    localStorage.removeItem('userInfo');
     const formInfo = {name, email, group, admin};
     socket.emit('joinTeam', formInfo);
+    console.log('joinTeam:', formInfo);
     user.update(formInfo);
+    console.log('localStateJoin1:', localState)
+    localStorage.removeItem('userInfo');
+    console.log('before:', localStorage.getItem("userInfo"))
     localStorage.setItem('userInfo', JSON.stringify(formInfo));
+    console.log('after:', localStorage.getItem("userInfo"))
   }
 
   const checkPlaceholder = () => {

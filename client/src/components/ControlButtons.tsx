@@ -42,14 +42,13 @@ const ControlButtons = () => {
   const createTeams = () => {
     socket.emit('createTeams', true);
   }
-  
   if (!user.admin) return <div></div>;
   return (
     <div className="btnGroup">
       <a className="waves-effect waves-light btn" onClick={start} style={btnStyle}>Start</a>
       <a className="waves-effect waves-light btn" onClick={pause} style={btnStyle}>Pause</a>
       <a className="waves-effect waves-light btn" onClick={reset} style={btnStyle}>Reset Round</a>
-      <a className="waves-effect waves-light btn disabled" onClick={startOver} style={btnStyle}>Reset Game</a>
+      <a className="waves-effect waves-light btn" onClick={startOver} style={btnStyle}>Reset Game</a>
       <a className="waves-effect waves-light btn" onClick={createTeams} style={teamBtn} >Create Teams</a>
     </div>
   )

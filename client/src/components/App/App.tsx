@@ -5,6 +5,7 @@ import CurrentPlayerCard from '../CurrentPlayerCard';
 import OtherPlayersCard from '../OtherPlayersCard';
 import ControlButtons from '../ControlButtons';
 import GameHeader from '../GameHeader';
+
 import UserAnswersContext from '../../contexts/UserAnswersContext';
 import GameStateContext from '../../contexts/GameStateContext';
 
@@ -12,11 +13,12 @@ import socket from '../../service/socketConnection';
 import { styles } from '../../cssObjects';
 import { stringify } from '../../service/strings';
 
-function App({ myTeam}): JSX.Element {
+function App({ myTeam }): JSX.Element {
 const gameState = useContext(GameStateContext);
 const {userAnswers} = useContext(UserAnswersContext);
 
   const showCorrectPage = () => {
+    console.log('app')
     if (gameState === 'running') {
       return (
         <div className="app" style={styles.flexColumn}>
@@ -33,6 +35,7 @@ const {userAnswers} = useContext(UserAnswersContext);
     } 
     // send answers to server
     if (gameState === 'ready' && userAnswers.size) {
+      console.log('answer:', userAnswers);
       const final = stringify(userAnswers);
       socket.emit('FinalAnswer', { team: myTeam, answers: final });
       userAnswers.clear();
