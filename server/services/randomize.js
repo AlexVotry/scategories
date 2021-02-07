@@ -23,17 +23,15 @@ function getRandom(max) {
 }
 
 function appointTeams (players) {
-  const blue = [];
   const len = players.length;
   const teams = {};
   const teamNames = ["Blue", "Red", "Purple", "Green", "Gold"];
-
+  
   let noOfTeams = 0;
 
   if (len < 6) {
     noOfTeams = len;
-  }
-  if (len > 9) {
+  } else if (len > 9) {
     noOfTeams = 5;
   } else {
     noOfTeams = Math.floor(len / 2);
@@ -46,4 +44,4 @@ function appointTeams (players) {
   return teams;
 }
 
-module.exports = { getLetter, getCategories };
+module.exports = { getLetter, getCategories, appointTeams };

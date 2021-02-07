@@ -6,6 +6,7 @@ import UserAnswersContext from '../contexts/UserAnswersContext';
 import UserContext from '../contexts/UserContext';
 import socket from '../service/socketConnection';
 import {pad} from '../service/strings';
+import { updateUserAnswers } from '../service/updateAnswers';
 import {colors} from '../cssObjects';
 
 const OthersGameSheet = (props) => {
@@ -20,7 +21,7 @@ const OthersGameSheet = (props) => {
     color: colors.Red,
     width: "100%"
   }
-
+  
   const handleChange = (e) => {
     const userAnswer = e.target.value;
     const arr = userAnswer.split('_');
@@ -55,8 +56,7 @@ const OthersGameSheet = (props) => {
       </>
     )
   }
-
-  const updateUserAnswers = (i, value) => {
+  const updateUserAnswers = (i: number, value: string) => {
     const index = pad(i);
     const temp = userAnswers.userAnswers;
     if (temp.has(index)) temp.delete(index);
@@ -64,7 +64,7 @@ const OthersGameSheet = (props) => {
     userAnswers.updateUA(temp);
   }
 
-  const updateOtherAnswers = (index, value) => {
+  const updateOtherAnswers = (index: number, value: string) => {
     if (guesses.has(index)) guesses.delete(index);
     setGuesses(new Map(guesses.set(index, value)));
   }
@@ -77,7 +77,6 @@ const OthersGameSheet = (props) => {
         const { answers, name } = newGuesses;
         const index = answers[0];
         const value = answers[1];
-        
         if (name === props.name) {
           updateOtherAnswers(index, value);
         } else if (name === user.name) {

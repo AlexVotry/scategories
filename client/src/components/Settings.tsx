@@ -40,7 +40,6 @@ const Settings = () => {
   }
 
   function showSettingsForm () {
-    console.log('showSettingsForm')
     return (
       <form className="col s12" style={settingsStyle} onSubmit={handleSubmit}>
         <div className="input-field col s12">

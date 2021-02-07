@@ -1,13 +1,18 @@
 // displays the timer.
 
-import React, {useContext} from 'react';
+import React, {useState} from 'react';
 import TimerContext from '../contexts/TimerContext';
+import socket from '../service/socketConnection';
 import { pad } from '../service/strings'
 
 
 
 const Timer = () => {
-  const timer = useContext(TimerContext);
+  const [timer, setTimer] = useState(180);
+
+  socket.on('Clock', clock => {
+    setTimer(clock);
+  });
 
   const digitStyle = {
     display: 'inline-block'

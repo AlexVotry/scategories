@@ -28,10 +28,11 @@ const JoinTeam = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    localStorage.removeItem('userInfo');
     const formInfo = {name, email, group, admin};
     socket.emit('joinTeam', formInfo);
     user.update(formInfo);
+    localStorage.removeItem('userInfo');
+    console.log('before:', localStorage.getItem("userInfo"))
     localStorage.setItem('userInfo', JSON.stringify(formInfo));
   }
 
@@ -73,7 +74,7 @@ const JoinTeam = () => {
           </div>
         </div>
 
-        <div className="row">
+        {/* <div className="row">
           <div className="input-field col s12">
             <input id="email" 
               type="email"
@@ -83,7 +84,7 @@ const JoinTeam = () => {
               onChange={e => setEmail(e.target.value)}/>
             <label className={eActive} htmlFor="email">Email</label>
           </div>
-        </div>
+        </div> */}
 
         <div>
           <p>

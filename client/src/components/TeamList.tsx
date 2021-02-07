@@ -1,6 +1,6 @@
 // displays the list of teams and the players on each team.
 
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import TeamsContext from '../contexts/TeamsContext';
 import TeamScoreContext from '../contexts/TeamScoreContext';
 import { colors, styles } from '../cssObjects';
@@ -42,6 +42,10 @@ function TeamList () {
       )
     })
   }
+
+  useEffect(() => {
+    console.log('teamScores:', teamScores);
+  }, [teamScores])
 
   if (isEmpty(list)) return <div></div>;
 

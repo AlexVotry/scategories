@@ -4,17 +4,24 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import CategoryContext from '../contexts/CategoryContext';
 import UserContext from '../contexts/UserContext';
+import TeamsContext from '../contexts/TeamsContext';
+import UserAnswersContext from '../contexts/UserAnswersContext';
 import { colors, styles } from '../cssObjects';
 import socket from '../service/socketConnection';
 import { pad } from '../service/strings';
+import { updateUserAnswers } from '../service/updateAnswers';
+import { findOthers } from '../service/parseTeams';
 
 const GameSheet = () => {
   const list = useContext(CategoryContext);
   const {user} = useContext(UserContext);
+  const teams = useContext(TeamsContext);
+  const userAnswers = useContext(UserAnswersContext);
   const { name, team } = user;
   const [answers, setAnswers] = useState(new Map());
   const [message, setMessage] = useState('');
   const [active, setActive] = useState('');
+  const others = findOthers(teams[user.team], user);
 
   const bgColor = user.team === "Gold" ? 'grey' : 'white';
   const textColor = user.team === 'Green' ? 'teamGreen' : '';
@@ -40,14 +47,24 @@ const GameSheet = () => {
   const updateAnswer = (index, val) => {
     if (answers.has(index)) answers.delete(index);
     setAnswers(new Map(answers.set(index, val)));
-    const guesses = { answers: [`${pad(index)}_${name}`, val], name };
-    socket.emit('newGuess', {guesses, team});
+    const i = `${pad(index)}_${name}`;
+    if (!others.length) updateUserAnswers(i, val);
+    // updateUserAnswers(i, val);
+    const guesses = { answers: [i, val], name };
+    // socket.emit('newGuess', {guesses, team});
   }
 
   const updateMessage = e => {
     e.preventDefault();
     socket.emit('newMessage', {message, name, team});
     setMessage('');
+  }
+
+  const updateUserAnswers = (index: string, value: string) => {
+    const temp = userAnswers.userAnswers;
+    if (temp.has(index)) temp.delete(index);
+    temp.set(index, value);
+    userAnswers.updateUA(temp);
   }
 
   const listForm = () => {
