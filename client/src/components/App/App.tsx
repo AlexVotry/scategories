@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useMemo} from 'react';
 
 import OpeningPage from '../OpeningPage';
 import CurrentPlayerCard from '../CurrentPlayerCard';
@@ -13,7 +13,7 @@ import socket from '../../service/socketConnection';
 import { styles } from '../../cssObjects';
 import { stringify } from '../../service/strings';
 
-function App({ myTeam }): JSX.Element {
+function App({ myTeam, messages }): JSX.Element {
   const gameState = useContext(GameStateContext);
   const {userAnswers} = useContext(UserAnswersContext);
 
@@ -24,20 +24,15 @@ function App({ myTeam }): JSX.Element {
     userAnswers.clear();
   }
 
-  useEffect(() => {
-    let mounted = true;
-    return () => mounted = false;
-  }, []);
-
   const showCorrectPage = () => {
-    console.log('app')
+    console.log('app', messages)
     if (gameState === 'running') {
       return (
         <div className="app" style={styles.flexColumn}>
           <GameHeader />
           <div className="appDisplayCards" style={styles.flexPlayers}>
               <CurrentPlayerCard />
-              <OtherPlayersCard />
+              <OtherPlayersCard messages = {messages}/>
           </div>
           <div>
             <ControlButtons />
@@ -48,8 +43,9 @@ function App({ myTeam }): JSX.Element {
 
     return <OpeningPage/>;
   }
-
-  return showCorrectPage();
+  return useMemo(() => {
+    return showCorrectPage();
+  }, [gameState, myTeam, messages])
 }
 
 export default App;

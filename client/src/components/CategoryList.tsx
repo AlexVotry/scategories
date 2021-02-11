@@ -1,6 +1,6 @@
 // create scategory list.
 
-import React, { useContext, useRef, useEffect } from 'react';
+import React, { useContext, useRef, useEffect, useMemo } from 'react';
 import CategoryContext from '../contexts/CategoryContext';
 import UserContext from '../contexts/UserContext';
 import FinalAnswersContext from '../contexts/FinalAnswersContext';
@@ -117,26 +117,6 @@ const CategoryList = () => {
       )
     });
   }
-  // socket.on('AllSubmissions', finalSubmissions => {
-  //   const teamArray = Object.keys(finalSubmissions);
-  //   teamArray.forEach(team => {
-  //     const teamAnswers = finalSubmissions[team].answers;
-
-  //     if (typeof teamAnswers === 'string') {
-  //       finalSubmissions[team].answers = new Map(JSON.parse(finalSubmissions[team].answers));
-  //     }
-  //   })
-  //   setFinalAnswers(finalSubmissions);
-  // });
-
-  // socket.on('startOver', numOfCategories => {
-  //   const answerMap = resetAnswersAndScores(numOfCategories);
-  //   teamAnswers.forEach(team => {
-  //     startOverAnswers = { ...startOverAnswers, [team]: { answers: answerMap, score: 0 } }
-  //   });
-  //   console.log('finalA:')
-  //   setFinalAnswers(startOverAnswers);
-  // })
 
   useEffect(() => {
     return () => {
@@ -145,7 +125,7 @@ const CategoryList = () => {
   }, [])
 
   if (list.length) {
-  // return useMemo(() => {
+  return useMemo(() => {
     return (
       <div className="categoryList container" style={{ marginTop: '20px'}}>
         <div className="row hr">
@@ -159,7 +139,7 @@ const CategoryList = () => {
         </div>
       </div>
     )
-  // }, [teamScores]) 
+  }, [list, finalAnswers]) 
 }
   return <div></div>
 

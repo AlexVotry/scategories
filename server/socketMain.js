@@ -15,7 +15,7 @@ let teams = {};
 const players = [];
 let totalPlayers;
 let totalTeams;
-let timer = 6;
+let timer = 20;
 let myTeam;
 let numOfCategories = 12;
 let teamNames;
@@ -84,6 +84,7 @@ function socketMain(io, socket) {
 
   // during active play join (team); between play join (room);
   socket.on('myTeam', team => {
+    console.log('team:', team)
     socket.join(team);
     myTeam = team;
   });
