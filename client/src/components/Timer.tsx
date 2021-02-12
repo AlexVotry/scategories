@@ -9,7 +9,7 @@ import { pad } from '../service/strings'
 
 const Timer = () => {
   // const [timer, setTimer] = useState(180);
-  const timer = useContext(TimerContext);
+  const [timer, setTimer] = TimerContext.useTimer();
 
   
 

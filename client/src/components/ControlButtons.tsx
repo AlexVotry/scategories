@@ -9,9 +9,9 @@ import socket from '../service/socketConnection';
 import { styles } from '../cssObjects';
 
 const ControlButtons = () => {
-  const gameState = useContext(GameStateContext);
+  const gameState = GameStateContext.useGameState();
+  const [teams, setTeams] = TeamsContext.useTeams();
   const {user} = useContext(UserContext);
-  const teams = useContext(TeamsContext);
   let teamBtn = {display: 'inline-block'};
   let otherBtns = {display: 'none'};
 
@@ -42,7 +42,7 @@ const ControlButtons = () => {
   const createTeams = () => {
     socket.emit('createTeams', true);
   }
-  if (!user.admin) return <div></div>;
+  if (!user.admin) return <div className="noAdmin"></div>;
   return (
     <div className="btnGroup">
       <a className="waves-effect waves-light btn" onClick={start} style={btnStyle}>Start</a>
@@ -52,6 +52,7 @@ const ControlButtons = () => {
       <a className="waves-effect waves-light btn" onClick={createTeams} style={teamBtn} >Create Teams</a>
     </div>
   )
+  // return <div>why is this happening?</div>
 }
 
 export default ControlButtons;

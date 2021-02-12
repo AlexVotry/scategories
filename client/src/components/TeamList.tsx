@@ -7,8 +7,8 @@ import { colors, styles } from '../cssObjects';
 import { orderTeams } from '../service/parseTeams';
 import { isEmpty } from 'lodash';
 
-function TeamList () {
-  const list = useContext(TeamsContext);
+function TeamList(): JSX.Element {
+  const [list, setList] =TeamsContext.useTeams();
   const [teamScores, setTeamScores] = TeamScoreContext.useTeamScore();
   let sortedTeams = Object.keys(list);
 
@@ -48,7 +48,11 @@ function TeamList () {
   console.log('teamScores:', teamScores);
   
   // return useMemo(() => {
-    return renderTeams()
+    return (
+      <>
+        {renderTeams()}
+      </>
+    )
   // }, [teamScores, list]);
 
 };

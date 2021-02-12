@@ -12,12 +12,12 @@ import { styles, colors } from '../cssObjects';
 import { findOthers } from '../service/parseTeams';
 import socket from '../service/socketConnection';
 
-const OtherPlayersCard = React.memo(({messages}) => {
+const OtherPlayersCard = ({messages}) => {
   console.log('otherplayingcard')
   // const [teammates, setTeammates] = useState([]);
   // const [messages, setMessages] = useState([]);
   const { user } = useContext(UserContext);
-  const teams = useContext(TeamsContext);
+  const [teams, setTeams] = TeamsContext.useTeams();
   const team = teams[user.team];
   const others = findOthers(team, user);
   
@@ -93,12 +93,12 @@ const OtherPlayersCard = React.memo(({messages}) => {
   //   return () => mounted = false;
   // }, []);
 
-  // return useMemo(() => {
+  return useMemo(() => {
     return (
       <div className="otherCard" style={otherCard}>
         <Scrollbars style={scrollBarStyle} >
           <div className="messages" style={styles.messages}>
-            {/* {showMessages()} */}
+            {showMessages()}
           </div>
         </Scrollbars>
         <div id="otherPlayers" className="otherPlayers" style={cardStyle} >
@@ -106,8 +106,8 @@ const OtherPlayersCard = React.memo(({messages}) => {
         </div>
       </div>
     )
-  // }, [messages])
+  }, [messages])
 
-})
+}
 
 export default OtherPlayersCard;

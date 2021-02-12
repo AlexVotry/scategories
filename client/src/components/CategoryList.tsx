@@ -14,7 +14,7 @@ import { isEmpty, isEqual } from 'lodash';
 const CategoryList = () => {
   // const list = categoryList;  //mock data
   // const finalAnswers = teamAnswer; //mock data
-  const list = useContext(CategoryContext);
+  const [list, setList] =CategoryContext.useCategpry();
   const [finalAnswers, setFinalAnswers] = FinalAnswersContext.useFinalAnswers();
   const {user} = useContext(UserContext);
   const [teamScores, setTeamScores] = TeamScoreContext.useTeamScore();

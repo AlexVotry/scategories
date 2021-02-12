@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import WebSocketUtility from './service/WebSocketUtility';
+import Provider from './service/Provider';
+import App from './components/App/App';
 
-ReactDOM.render(<WebSocketUtility />, document.getElementById('root'));
+ReactDOM.render(<Provider />, document.getElementById('root'));

@@ -1,3 +1,15 @@
 import React from 'react';
+import { getContext, getProvider } from './helper';
 
-export default React.createContext({});
+const TeamsContext = React.createContext({});
+
+function useTeams() {
+  return getContext(TeamsContext, 'TeamsContext');
+};
+
+function TeamsProvider(props: any) {
+  const [teams, setTeams] = React.useState({});
+  return getProvider(TeamsContext, teams, setTeams, props);
+}
+
+export default { TeamsProvider, useTeams };

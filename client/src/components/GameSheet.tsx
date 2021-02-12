@@ -13,10 +13,10 @@ import { updateUserAnswers } from '../service/updateAnswers';
 import { findOthers } from '../service/parseTeams';
 
 const GameSheet = () => {
-  const list = useContext(CategoryContext);
   const {user} = useContext(UserContext);
-  const teams = useContext(TeamsContext);
-  const userAnswers = useContext(UserAnswersContext);
+  const userAnswers = useContext (UserAnswersContext);
+  const [list, setList] = CategoryContext.useCategpry();
+  const [teams, setTeams] = TeamsContext.useTeams();
   const { name, team } = user;
   const [answers, setAnswers] = useState(new Map());
   const [message, setMessage] = useState('');

@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useMemo} from 'react';
+import React, {useContext, useEffect, useMemo, useState} from 'react';
 
 import OpeningPage from '../OpeningPage';
 import CurrentPlayerCard from '../CurrentPlayerCard';
@@ -13,19 +13,21 @@ import socket from '../../service/socketConnection';
 import { styles } from '../../cssObjects';
 import { stringify } from '../../service/strings';
 
-function App({ myTeam, messages }): JSX.Element {
-  const gameState = useContext(GameStateContext);
+function App({ myTeam }): JSX.Element {
+  const [gameState, setGamestate] = GameStateContext.useGameState();
   const {userAnswers} = useContext(UserAnswersContext);
+  const [messages, setMessages] = useState([]);
 
     // send answers to server
   if (gameState === 'ready' && userAnswers.size) {
     const final = stringify(userAnswers);
     socket.emit('FinalAnswer', { team: myTeam, answers: final });
     userAnswers.clear();
+    setMessages([]);
   }
 
   const showCorrectPage = () => {
-    console.log('app', messages)
+    console.log('app')
     if (gameState === 'running') {
       return (
         <div className="app" style={styles.flexColumn}>
@@ -43,6 +45,13 @@ function App({ myTeam, messages }): JSX.Element {
 
     return <OpeningPage/>;
   }
+
+useEffect(() => {
+  socket.on('updateMessage', newMessages => {
+      setMessages(arr => [...arr, newMessages]);
+  });
+}, [])
+
   return useMemo(() => {
     return showCorrectPage();
   }, [gameState, myTeam, messages])

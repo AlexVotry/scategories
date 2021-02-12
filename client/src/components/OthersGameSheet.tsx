@@ -1,6 +1,6 @@
 // shows the scategory list for each team.
 
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import CategoryContext from '../contexts/CategoryContext';
 import UserAnswersContext from '../contexts/UserAnswersContext';
 import UserContext from '../contexts/UserContext';
@@ -10,11 +10,12 @@ import { updateUserAnswers } from '../service/updateAnswers';
 import {colors} from '../cssObjects';
 
 const OthersGameSheet = (props) => {
-  const list = useContext(CategoryContext);
   const userAnswers = useContext(UserAnswersContext);
   const {user} = useContext(UserContext);
+  const [list, setList] = CategoryContext.useCategpry();
   const [guesses, setGuesses] = useState(new Map());
   const [isChecked, setIsChecked] = useState({})
+  const webSocket = useRef(null);
  
   const answerStyle = {
     backgroundColor: colors.White,
@@ -70,10 +71,10 @@ const OthersGameSheet = (props) => {
   }
   
   useEffect(() => {
-    let mounted = true;
-    if (mounted) {
+      console.log('othGamSht')
       updateUserAnswers(42, 'no answer');
       socket.on('updateAnswers', newGuesses => {
+        console.log('updateAnswer', newGuesses)
         const { answers, name } = newGuesses;
         const index = answers[0];
         const value = answers[1];
@@ -83,8 +84,7 @@ const OthersGameSheet = (props) => {
           updateUserAnswers(index, value);
         }
       })
-    }
-    return () => mounted = false;
+    return () => socket.off('updateAnswers', 'off')
   }, [])
 
   return (
