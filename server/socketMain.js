@@ -14,7 +14,7 @@ const db = require('./models');
 let teams = {};
 const players = [];
 let totalPlayers;
-let totalTeams;
+let oldGuesses;
 let timer = 20;
 let myTeam;
 let numOfCategories = 12;
@@ -52,7 +52,6 @@ function socketMain(io, socket) {
     teams = await createMockTeams(players, teamGroup);
     totalPlayers = count = players.length;
     assignTeams(teams);
-    console.log('createTeams', data);
     io.to(room).emit('newTeams', teams);
   });
 
@@ -91,8 +90,13 @@ function socketMain(io, socket) {
 
   // every guess goes to the teammates to see.
   socket.on('newGuess', newGuesses => {
-    const { guesses, team } = newGuesses;
-    io.to(team).emit('updateAnswers', guesses);
+    console.log("newGuesses");
+    if (!isEqual(oldGuesses, newGuesses)) {
+      console.log('oldGuesses:')
+      const { guesses, team } = newGuesses;
+      io.to(team).emit('updateAnswers', guesses);
+      oldGuesses = newGuesses;
+    }
   });
   
   socket.on('newMessage', messages => {
