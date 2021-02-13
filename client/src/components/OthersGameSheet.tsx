@@ -1,8 +1,11 @@
 // shows the scategory list for each team.
 
 import React, { useContext, useState, useEffect, useRef } from 'react';
+import { isEmpty } from 'lodash';
+
 import CategoryContext from '../contexts/CategoryContext';
 import UserAnswersContext from '../contexts/UserAnswersContext';
+import OtherGuessesContext from '../contexts/OtherGuessesContext';
 import UserContext from '../contexts/UserContext';
 import socket from '../service/socketConnection';
 import {pad} from '../service/strings';
@@ -11,11 +14,12 @@ import {colors} from '../cssObjects';
 
 const OthersGameSheet = (props) => {
   const userAnswers = useContext(UserAnswersContext);
+  const [otherGuesses, setOtherGuesses] = OtherGuessesContext.useOtherGuesses();
   const {user} = useContext(UserContext);
   const [list, setList] = CategoryContext.useCategpry();
   const [guesses, setGuesses] = useState(new Map());
   const [isChecked, setIsChecked] = useState({})
-  const webSocket = useRef(null);
+  const webSocket = useRef();
  
   const answerStyle = {
     backgroundColor: colors.White,
@@ -71,11 +75,9 @@ const OthersGameSheet = (props) => {
   }
   
   useEffect(() => {
-      console.log('othGamSht')
-      updateUserAnswers(42, 'no answer');
-      socket.on('updateAnswers', newGuesses => {
-        console.log('updateAnswer', newGuesses)
-        const { answers, name } = newGuesses;
+    updateUserAnswers(42, 'no answer');
+      if (!isEmpty(otherGuesses)) {
+        const { answers, name } = otherGuesses;
         const index = answers[0];
         const value = answers[1];
         if (name === props.name) {
@@ -83,9 +85,8 @@ const OthersGameSheet = (props) => {
         } else if (name === user.name) {
           updateUserAnswers(index, value);
         }
-      })
-    return () => socket.off('updateAnswers', 'off')
-  }, [])
+      }
+  }, [otherGuesses, userAnswers])
 
   return (
     <ol className="gameSheet">

@@ -9,6 +9,7 @@ import LetterContext from '../contexts/LetterContext';
 import CategoryContext from '../contexts/CategoryContext';
 import GameStateContext from '../contexts/GameStateContext';
 import UserAnswersContext from '../contexts/UserAnswersContext';
+import OtherGuessesContext from '../contexts/OtherGuessesContext';
 import FinalAnswersContext from '../contexts/FinalAnswersContext';
 import TeamScoreContext from '../contexts/TeamScoreContext';
 import TimerContext from '../contexts/TimerContext';
@@ -39,13 +40,15 @@ function Provider() {
             <LetterContext.LetterProvider>
               <GameStateContext.GameStateProvider>
                 <FinalAnswersContext.FinalAnswersProvider>
-                  <TeamScoreContext.TeamScoreProvider>
-                    <TimerContext.TimerProvider>
-                      <UserAnswersContext.Provider value={{ userAnswers, updateUA }}>
-                        <WebSocketUtiltiy/>
-                      </UserAnswersContext.Provider>
-                    </TimerContext.TimerProvider>
-                  </TeamScoreContext.TeamScoreProvider>
+                  <OtherGuessesContext.OtherGuessesProvider>
+                    <TeamScoreContext.TeamScoreProvider>
+                      <TimerContext.TimerProvider>
+                        <UserAnswersContext.Provider value={{ userAnswers, updateUA }}>
+                          <WebSocketUtiltiy/>
+                        </UserAnswersContext.Provider>
+                      </TimerContext.TimerProvider>
+                    </TeamScoreContext.TeamScoreProvider>
+                  </OtherGuessesContext.OtherGuessesProvider>
                 </FinalAnswersContext.FinalAnswersProvider>
               </GameStateContext.GameStateProvider>
             </LetterContext.LetterProvider>

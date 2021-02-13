@@ -23,8 +23,6 @@ const CategoryList = () => {
   const columns = Math.floor(12 / (teamAnswers.length + 1));
   const col = `col s${columns}`;
   const teamTotals = {};
-  let startOverAnswers = {};
-  const mountedRef = useRef(true)
 
   const makeHeaders = () => {
     console.log('categoryList')
@@ -101,14 +99,15 @@ const CategoryList = () => {
   }
 
   const showTeamTotals = () => {
-    if (!isEqual(teamTotals, teamScores)) {
-      setTeamScores(teamTotals);
-    }
-    socket.emit('updateScores', { score: teamTotals[user.team], team: user.team });
+    console.log('teamTotals:', teamTotals, 'teamScores:', teamScores)
     return teamAnswers.map((team) => {
       const currentScore = teamTotals[team] || 0;
       const total = finalAnswers[team].score + (currentScore);
       teamTotals[team] = total;
+      if (!isEqual(teamTotals, teamScores)) {
+        setTeamScores(teamTotals);
+        socket.emit('updateScores', { score: teamTotals[user.team], team: user.team });
+      }
       return (
         <div className={col} key={team} style={{ color: colors[team] }}>
           <div>Current: { currentScore }</div>
@@ -117,12 +116,6 @@ const CategoryList = () => {
       )
     });
   }
-
-  useEffect(() => {
-    return () => {
-      mountedRef.current = false
-    }
-  }, [])
 
   if (list.length) {
   return useMemo(() => {
