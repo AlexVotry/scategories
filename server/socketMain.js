@@ -90,13 +90,8 @@ function socketMain(io, socket) {
 
   // every guess goes to the teammates to see.
   socket.on('newGuess', newGuesses => {
-    console.log("newGuesses");
-    if (!isEqual(oldGuesses, newGuesses)) {
-      console.log('oldGuesses:')
-      const { guesses, team } = newGuesses;
-      io.to(team).emit('updateAnswers', guesses);
-      oldGuesses = newGuesses;
-    }
+    const { guesses, team } = newGuesses;
+    io.to(team).emit('updateAnswers', guesses);
   });
   
   socket.on('newMessage', messages => {
