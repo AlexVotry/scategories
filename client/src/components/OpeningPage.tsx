@@ -7,6 +7,7 @@ import ControlButtons from './ControlButtons';
 import Settings from './Settings';
 import JoinTeam from './JoinTeam';
 import TeamList from './TeamList';
+import AllUsersList from './AllUsersList';
 import UserContext from '../contexts/UserContext';
 import FinalAnswersContext from '../contexts/FinalAnswersContext';
 import TeamScoreContext from '../contexts/TeamScoreContext';
@@ -28,7 +29,10 @@ const OpeningPage = () => {
   }
 
   const joinTeam = () => {
-    if (!isEmpty(user)) return null;
+    if (!isEmpty(user) ) {
+      if (user.team) return null;
+      return <AllUsersList/>
+    }
     return <JoinTeam/>
   }
 
@@ -62,7 +66,6 @@ const OpeningPage = () => {
     teamArray.forEach(team => {
       startOverAnswers = { ...startOverAnswers, [team]: { answers: answerMap, score: 0 } }
     });
-    console.log('finalA:')
     setFinalAnswers(startOverAnswers);
   })
   
@@ -73,7 +76,7 @@ const OpeningPage = () => {
       <Settings />
     </div>
     <div className="OpeningPage" style={openingStyle}>
-      <div className="openingPageLeft" style={{width: '70vw'}}>
+        <div className="openingPageLeft" style={{ width: '70vw' }}>
         <CategoryList/>
         {joinTeam()}
       </div>

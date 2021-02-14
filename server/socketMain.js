@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 // const { User } = require('./models');
 const { mongoUrl } = require('./secrets');
 
-const {handleGame, pauseGame, resetGame } = require('./services/handleGame');
+const {handleGame, stopTimer, resetGame } = require('./services/handleGame');
 const { handleAnswers, getFinalAnswers, compareTeamAnswers, updateScores, resetScores} = require('./services/handleAnswers');
 const {createMockTeams, createTeams, getTeams } = require('./services/createTeams');
 const {keysIn , isEqual} = require('lodash');
@@ -13,14 +13,14 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, useFind
 const db = require('./models');
 let teams = {};
 const players = [];
+const allPlayers = [];
 let totalPlayers;
-let oldGuesses;
-let timer = 20;
 let myTeam;
 let numOfCategories = 12;
 let teamNames;
 let count = totalPlayers;
 let teamGroup;
+let timer = 10;
 
 function socketMain(io, socket) {
   let room = '';
@@ -46,6 +46,7 @@ function socketMain(io, socket) {
     console.log(`${name} joined ${group}`);
     const currentUser = await addUserToGroup(formInfo);
     socket.emit('currentUser', currentUser)
+    io.to(teamGroup).emit('AllUsers', allPlayers);
   });
 
   socket.on('createTeams', async data => {
@@ -61,7 +62,7 @@ function socketMain(io, socket) {
     handleGame(io, room, timer, numOfCategories, gameState);
 
     if (gameState === 'running') {
-      // at start of game, add 0 to end of team.
+      // at start of game, add 0 to end of team (initial score)
       teamNames.forEach(name => {
         teams[name].splice(-1, 1, 0);
       });
@@ -73,9 +74,10 @@ function socketMain(io, socket) {
   });
 
   socket.on('pushPause', pause => {
-    pauseGame();
+    stopTimer();
   });
 
+  // reset timer and new categories and letter
   socket.on('reset', reset => {
     resetGame(timer);
     handleGame(io, room, timer, numOfCategories, 'running');
@@ -107,6 +109,7 @@ function socketMain(io, socket) {
       const teamAnswers = await getFinalAnswers(teamGroup);
       // compare team's answer to each other and cross out duplicates.
       const finalAnswers = await compareTeamAnswers(teamAnswers, numOfCategories)
+
       io.to(room).emit('AllSubmissions', finalAnswers);
       count = totalPlayers;
     }
@@ -149,6 +152,7 @@ const addUserToGroup = async user => {
       if (err) throw err;
       else {
         players.push(user);
+        allPlayers.push(user.name)
       }
     })
 

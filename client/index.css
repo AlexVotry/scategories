@@ -7,6 +7,7 @@
   max-width: 100%;
   width: 98%;
   margin: 10px;
+  background-color: #eceff1;
 }
 
 ol {
@@ -73,7 +74,7 @@ h4 {
 
 .settingsButton {
   margin-top: 10px;
-  background-color: #4db6ac;
+  background-color: #546e7a;
   color: #ffffff;
   border: none;
   border-radius: 3px;
@@ -81,11 +82,39 @@ h4 {
 }
 
 .settingsButton:hover {
-  background-color: #80cbc4 ;
+  background-color: #37474f;
   color: #ffffff;
 }
 
 .settingsButton:disabled {
   background-color: #e0e0e0;
   color: #fff;
+}
+
+.waves-effect {
+  background-color: #546e7a;
+}
+
+.waves-effect:hover {
+  background-color: #37474f;
+}
+
+.blueGrey:checked + label:before {
+  top: -4px;
+  left: -3px;
+  width: 12px;
+  height: 22px;
+  border-top: 2px solid transparent;
+  border-left: 2px solid transparent;
+  border-right: 2px solid #546e7a; 
+  border-bottom: 2px solid #546e7a; 
+  transform: rotate(40deg);
+  transform-origin: 100% 100%; }
+
+.otherAnswers {
+  color: #37474f;
+}
+
+.otherAnswers:checked {
+  color: white;
 }

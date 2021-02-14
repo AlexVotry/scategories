@@ -4,6 +4,7 @@ import socket from './socketConnection';
 import WebSocketUtiltiy from './WebSocketUtility';
 import App from '../components/App/App';
 import UserContext from '../contexts/UserContext';
+import AllUsersContext from '../contexts/AllUsersContext';
 import TeamsContext from '../contexts/TeamsContext';
 import LetterContext from '../contexts/LetterContext';
 import CategoryContext from '../contexts/CategoryContext';
@@ -28,32 +29,33 @@ function Provider() {
   // });
   
   socket.on('currentUser', newUser => {
-    console.log('newUser', newUser);
       setUser(newUser);
   })
 
 
     return (
       <UserContext.Provider value={{ user, update }}>
-        <TeamsContext.TeamsProvider >
-          <CategoryContext.CategoryProvider>
-            <LetterContext.LetterProvider>
-              <GameStateContext.GameStateProvider>
-                <FinalAnswersContext.FinalAnswersProvider>
-                  <OtherGuessesContext.OtherGuessesProvider>
-                    <TeamScoreContext.TeamScoreProvider>
-                      <TimerContext.TimerProvider>
-                        <UserAnswersContext.Provider value={{ userAnswers, updateUA }}>
-                          <WebSocketUtiltiy/>
-                        </UserAnswersContext.Provider>
-                      </TimerContext.TimerProvider>
-                    </TeamScoreContext.TeamScoreProvider>
-                  </OtherGuessesContext.OtherGuessesProvider>
-                </FinalAnswersContext.FinalAnswersProvider>
-              </GameStateContext.GameStateProvider>
-            </LetterContext.LetterProvider>
-          </CategoryContext.CategoryProvider>
-        </TeamsContext.TeamsProvider>
+        <AllUsersContext.AllUsersProvider>
+          <TeamsContext.TeamsProvider >
+            <CategoryContext.CategoryProvider>
+              <LetterContext.LetterProvider>
+                <GameStateContext.GameStateProvider>
+                  <FinalAnswersContext.FinalAnswersProvider>
+                    <OtherGuessesContext.OtherGuessesProvider>
+                      <TeamScoreContext.TeamScoreProvider>
+                        <TimerContext.TimerProvider>
+                          <UserAnswersContext.Provider value={{ userAnswers, updateUA }}>
+                            <WebSocketUtiltiy/>
+                          </UserAnswersContext.Provider>
+                        </TimerContext.TimerProvider>
+                      </TeamScoreContext.TeamScoreProvider>
+                    </OtherGuessesContext.OtherGuessesProvider>
+                  </FinalAnswersContext.FinalAnswersProvider>
+                </GameStateContext.GameStateProvider>
+              </LetterContext.LetterProvider>
+            </CategoryContext.CategoryProvider>
+          </TeamsContext.TeamsProvider>
+        </AllUsersContext.AllUsersProvider>
       </UserContext.Provider>
     )
 }

@@ -99,7 +99,7 @@ const CategoryList = () => {
   }
 
   const showTeamTotals = () => {
-    console.log('teamTotals:', teamTotals, 'teamScores:', teamScores)
+    // console.log('teamTotals:', teamTotals, 'teamScores:', teamScores)
     return teamAnswers.map((team) => {
       const currentScore = teamTotals[team] || 0;
       const total = finalAnswers[team].score + (currentScore);

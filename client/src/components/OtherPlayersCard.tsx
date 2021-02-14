@@ -85,14 +85,8 @@ const OtherPlayersCard = ({messages}) => {
     });
   }
 
-  // useEffect(() => {
-  //   let mounted = true;
-  //   if (mounted) {
-      
-  //   }
-  //   return () => mounted = false;
-  // }, []);
-
+  if (!others.length) return <div></div>;
+  
   return useMemo(() => {
     return (
       <div className="otherCard" style={otherCard}>

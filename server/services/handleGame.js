@@ -11,25 +11,26 @@ let letters = letter;
 function handleGame(io, room, timer, numOfCategories, gameState) {
   setUpNewGame(io, room, numOfCategories, gameState);
   if (gameState === 'running') startGame(io, room, timer);
-  else if (gameState === 'pause') pauseGame();
+  else if (gameState === 'pause') stopTimer();
   else if (gameState === "resetRound" || gameState === 'startOver') resetGame(timer);
 }
 
 function startGame(io, room, timer) {
   middleOfGame = true;
-  pauseGame();
+  stopTimer();
   if (totalTime === 0) totalTime = timer;
   ticker = setInterval(() => {
       if (totalTime > 0) {
       totalTime--;
       io.to(room).emit('Clock', totalTime);
     } else {
+      middleOfGame = false;
       io.to(room).emit('gameState', 'ready');
     }
   }, 1000);
 }
 
-function pauseGame() {
+function stopTimer() {
   clearInterval(ticker);
 }
 
@@ -54,4 +55,4 @@ function setUpNewGame(io, room, numOfCategories, gameState) {
   }
 }
 
-module.exports = { handleGame, pauseGame, resetGame };
+module.exports = { handleGame, stopTimer, resetGame };

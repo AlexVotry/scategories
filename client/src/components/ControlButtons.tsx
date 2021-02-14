@@ -45,11 +45,11 @@ const ControlButtons = () => {
   if (!user.admin) return <div className="noAdmin"></div>;
   return (
     <div className="btnGroup">
-      <a className="waves-effect waves-light btn" onClick={start} style={btnStyle}>Start</a>
-      <a className="waves-effect waves-light btn" onClick={pause} style={btnStyle}>Pause</a>
-      <a className="waves-effect waves-light btn" onClick={reset} style={btnStyle}>Reset Round</a>
-      <a className="waves-effect waves-light btn" onClick={startOver} style={btnStyle}>Reset Game</a>
-      <a className="waves-effect waves-light btn" onClick={createTeams} style={teamBtn} >Create Teams</a>
+      <a className="waves-effect waves-red btn" onClick={start} style={btnStyle}>Start</a>
+      <a className="waves-effect waves-red btn" onClick={pause} style={btnStyle}>Pause</a>
+      <a className="waves-effect waves-red btn" onClick={reset} style={btnStyle}>Reset Round</a>
+      <a className="waves-effect waves-red btn" onClick={startOver} style={btnStyle}>Reset Game</a>
+      <a className="waves-effect waves-red btn" onClick={createTeams} style={teamBtn} >Create Teams</a>
     </div>
   )
   // return <div>why is this happening?</div>

@@ -24,7 +24,7 @@ function TeamList(): JSX.Element {
       const members = list[team];
       if (members.length) {
         return (
-          <div key={team}>
+          <div key={team} >
             <h4 style={{color: colors[team]}}>{team}<span style={{fontSize: 'small'}}> score: {score} </span></h4>
             <ol style={playerStyle}>
               {parseTeamMembers(members)}
@@ -45,15 +45,12 @@ function TeamList(): JSX.Element {
   
   
   if (isEmpty(list)) return <div></div>;
-  console.log('teamScores:', teamScores);
   
-  // return useMemo(() => {
     return (
-      <>
+      <div style={{ backgroundColor: '#fff3e0', margin: '10px', padding: '10px' }}>
         {renderTeams()}
-      </>
+      </div>
     )
-  // }, [teamScores, list]);
 
 };
 

@@ -6,8 +6,8 @@ export const colors = {
   Red: '#96281b',
   Green: '#049372',
   Purple: '#674172',
-  Gold: '#f2d984'
-
+  Gold: '#f2d984',
+  BlueGray: '#37474f'
 }
 
 export const styles = {
@@ -75,4 +75,5 @@ export const styles = {
     fontSize: '.85em',
     marginRight: '2px'
   }
+  
 }

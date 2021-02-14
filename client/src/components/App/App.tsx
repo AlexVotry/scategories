@@ -27,7 +27,6 @@ function App({ myTeam }): JSX.Element {
   }
 
   const showCorrectPage = () => {
-    console.log('app')
     if (gameState === 'running') {
       return (
         <div className="app" style={styles.flexColumn}>
