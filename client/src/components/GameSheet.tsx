@@ -13,10 +13,10 @@ import { updateUserAnswers } from '../service/updateAnswers';
 import { findOthers } from '../service/parseTeams';
 
 const GameSheet = () => {
-  const list = useContext(CategoryContext);
   const {user} = useContext(UserContext);
-  const teams = useContext(TeamsContext);
-  const userAnswers = useContext(UserAnswersContext);
+  const userAnswers = useContext (UserAnswersContext);
+  const [list, setList] = CategoryContext.useCategpry();
+  const [teams, setTeams] = TeamsContext.useTeams();
   const { name, team } = user;
   const [answers, setAnswers] = useState(new Map());
   const [message, setMessage] = useState('');
@@ -48,10 +48,12 @@ const GameSheet = () => {
     if (answers.has(index)) answers.delete(index);
     setAnswers(new Map(answers.set(index, val)));
     const i = `${pad(index)}_${name}`;
-    if (!others.length) updateUserAnswers(i, val);
-    // updateUserAnswers(i, val);
-    const guesses = { answers: [i, val], name };
-    // socket.emit('newGuess', {guesses, team});
+    if (!others.length) {
+      updateUserAnswers(i, val);
+    } else {
+      const guesses = { answers: [i, val], name };
+      socket.emit('newGuess', {guesses, team});
+    }
   }
 
   const updateMessage = e => {

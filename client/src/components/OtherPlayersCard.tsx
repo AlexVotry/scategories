@@ -1,6 +1,6 @@
 // shows the scategory list (PlayerList component), letter, timer, and control buttons for each team. 
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useMemo } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import OthersGameSheet from './OthersGameSheet';
 import Timer from './Timer';
@@ -12,12 +12,12 @@ import { styles, colors } from '../cssObjects';
 import { findOthers } from '../service/parseTeams';
 import socket from '../service/socketConnection';
 
-const OtherPlayersCard = () => {
+const OtherPlayersCard = ({messages}) => {
   console.log('otherplayingcard')
-  const [teammates, setTeammates] = useState([]);
-  const [messages, setMessages] = useState([]);
+  // const [teammates, setTeammates] = useState([]);
+  // const [messages, setMessages] = useState([]);
   const { user } = useContext(UserContext);
-  const teams = useContext(TeamsContext);
+  const [teams, setTeams] = TeamsContext.useTeams();
   const team = teams[user.team];
   const others = findOthers(team, user);
   
@@ -85,28 +85,23 @@ const OtherPlayersCard = () => {
     });
   }
 
-  useEffect (() => {
-    let mounted = true;
-    if (mounted) {
-      socket.on('updateMessage', newMessages => {
-        setMessages(arr => [...arr, newMessages]);
-      });
-    }
-    return () => mounted = false;
-  }, []);
-
-  return (
-    <div className="otherCard" style={otherCard}>
-      <Scrollbars style={scrollBarStyle} >
-        <div className="messages" style={styles.messages}>
-          {showMessages()}
+  if (!others.length) return <div></div>;
+  
+  return useMemo(() => {
+    return (
+      <div className="otherCard" style={otherCard}>
+        <Scrollbars style={scrollBarStyle} >
+          <div className="messages" style={styles.messages}>
+            {showMessages()}
+          </div>
+        </Scrollbars>
+        <div id="otherPlayers" className="otherPlayers" style={cardStyle} >
+          {renderOthers()}
         </div>
-      </Scrollbars>
-      <div id="otherPlayers" className="otherPlayers" style={cardStyle} >
-        {renderOthers()}
       </div>
-    </div>
-  )
+    )
+  }, [messages])
+
 }
 
 export default OtherPlayersCard;

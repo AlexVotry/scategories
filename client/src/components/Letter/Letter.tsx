@@ -5,7 +5,7 @@ import LetterContext from '../../contexts/LetterContext';
 import './letter.css';
 
 const Letter = (): JSX.Element => {
-  const currentLetter = useContext(LetterContext);
+  const [currentLetter, setCurrentLetter] = LetterContext.useLetter();
 
   return (
       <div id="letterContainer">

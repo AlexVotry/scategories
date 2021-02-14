@@ -1,14 +1,14 @@
 // displays the list of teams and the players on each team.
 
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useMemo } from 'react';
 import TeamsContext from '../contexts/TeamsContext';
 import TeamScoreContext from '../contexts/TeamScoreContext';
 import { colors, styles } from '../cssObjects';
 import { orderTeams } from '../service/parseTeams';
 import { isEmpty } from 'lodash';
 
-function TeamList () {
-  const list = useContext(TeamsContext);
+function TeamList(): JSX.Element {
+  const [list, setList] =TeamsContext.useTeams();
   const [teamScores, setTeamScores] = TeamScoreContext.useTeamScore();
   let sortedTeams = Object.keys(list);
 
@@ -24,7 +24,7 @@ function TeamList () {
       const members = list[team];
       if (members.length) {
         return (
-          <div key={team}>
+          <div key={team} >
             <h4 style={{color: colors[team]}}>{team}<span style={{fontSize: 'small'}}> score: {score} </span></h4>
             <ol style={playerStyle}>
               {parseTeamMembers(members)}
@@ -42,18 +42,16 @@ function TeamList () {
       )
     })
   }
-
-  useEffect(() => {
-    console.log('teamScores:', teamScores);
-  }, [teamScores])
-
+  
+  
   if (isEmpty(list)) return <div></div>;
+  
+    return (
+      <div style={{ backgroundColor: '#fff3e0', margin: '10px', padding: '10px' }}>
+        {renderTeams()}
+      </div>
+    )
 
-  return (
-    <div>
-      {renderTeams()}
-    </div>
-  );
 };
 
 export default TeamList;

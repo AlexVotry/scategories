@@ -1,85 +1,88 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useMemo } from 'react';
 import socket from './socketConnection';
 import { find, remove, isEqual, isEmpty, set } from 'lodash';
 import { assignTeam } from '../service/parseTeams';
+import { resetAnswersAndScores } from '../service/reset';
 
 import App from '../components/App/App';
 import UserContext from '../contexts/UserContext';
+import AllUsersContext from '../contexts/AllUsersContext';
 import TeamsContext from '../contexts/TeamsContext';
 import LetterContext from '../contexts/LetterContext';
 import CategoryContext from '../contexts/CategoryContext';
-import { resetAnswersAndScores } from '../service/reset';
 import GameStateContext from '../contexts/GameStateContext';
 import UserAnswersContext from '../contexts/UserAnswersContext';
+import OtherGuessesContext from '../contexts/OtherGuessesContext';
 import FinalAnswersContext from '../contexts/FinalAnswersContext';
 import TeamScoreContext from '../contexts/TeamScoreContext';
+import TimerContext from '../contexts/TimerContext';
 
-function WebSocketUtility() {
-  
-  const [teams, setTeams] = useState({});
-  const [prevTeams, setprevTeams] = useState('');
+function WebSocketUtility() { 
+  const [teams, setTeams] = TeamsContext.useTeams();
   const [myTeam, setMyTeam] = useState('');
-  const [user, setUser] = useState({});
-  const [userPrev, setUserPrev] = useState({});
-  const [gameState, setGameState] = useState('ready');
+
+  const user = useContext(UserContext);
+  const userInfo = user.user;
+  const [userPrev, setUserPrev] = useState(userInfo);
+  const [allUsers, setAllUsers] = AllUsersContext.useAllUsers();
+
+  const [finalAnswers, setFinalAnswers] = FinalAnswersContext.useFinalAnswers();
+  const [otherGuesses, setOtherGuesses] = OtherGuessesContext.useOtherGuesses();
+
+  const [gameState, setGameState] =GameStateContext.useGameState();
   const [prevGameState, setprevGameState] = useState('');
-  // const [timer, setTimer] = useState(0);
-  const [currentLetter, setCurrentLetter] = useState('');
-  const [categories, setCategories] = useState([]);
-  const [finalAnswers, setFinalAnswers] = useState({});
-  const [prevFinalAnswers, setPrevFinalAnswers] = useState({ empty: 0 });
-  const [userAnswers, setUserAnswers] = useState(new Map());
+  const [currentLetter, setCurrentLetter] = LetterContext.useLetter();
+  const [categories, setCategories] = CategoryContext.useCategpry();
+  const [timer, setTimer] = TimerContext.useTimer();
+  const [messages, setMessages] = useState([]);
 
-  const update = user => setUser(user);
-  const updateUA = answers => setUserAnswers(answers);
-
-  socket.on('initUser', info => {
-    setUser(info.currentUser);
-    setMyTeam(user.team);
-    setTeams(info.teams)
-  });
-
-  if (!isEqual(user, userPrev)) {
-    socket.on('currentUser', newUser => {
-      // console.log('NewUser', newUser, user);
-      if (!isEmpty(newUser)) {
-        setUser(newUser);
-        setUserPrev(newUser);
-      }
-    })
-  }
-
-  socket.on('newGame', gameInfo => {
-    setCategories(gameInfo.categories);
-    setCurrentLetter(gameInfo.currentLetter);
-  });
-
-  if (!isEqual(prevTeams, teams)) {
-    setprevTeams(teams);
-    socket.on('newTeams', newTeams => {
-      setTeams(newTeams);
-      const localState = JSON.parse(localStorage.getItem("userInfo"));
-      const team = !isEmpty(localState) ? assignTeam(newTeams, localState) : null;
-      const newUser = { ...localState, team };
-      setUser(newUser);
-      console.log('newUser:', newUser);
-      setMyTeam(team);
-      localStorage.removeItem('userInfo');
-      localStorage.setItem('userInfo', JSON.stringify(newUser));
-    }).emit('myTeam', user.team);
-  }
-
-  if (!isEqual(prevGameState, gameState)) {
-    setprevGameState(gameState);
-    socket.on('gameState', gameState => {
-      setGameState(gameState);
+  useEffect(() => {
+    if (!isEqual(userInfo, userPrev)) initiate();
+  }, [userInfo])
+  
+  function initiate() {
+    setUserPrev(userInfo);
+    socket.on('newGame', gameInfo => {
+      setCategories(gameInfo.categories);
+      setCurrentLetter(gameInfo.currentLetter);
     });
-  }
 
-  socket.on('AllSubmissions', finalSubmissions => {
-  const teamArray = Object.keys(finalSubmissions);
+    socket.on('AllUsers', allUsers => {
+      setAllUsers(allUsers)
+    })
+
+    socket.on('newTeams', newTeams => {
+        setTeams(newTeams);
+        const localState = userInfo;
+        const team = !isEmpty(localState) ? assignTeam(newTeams, localState) : null;
+        const newUser = { ...localState, team };
+        user.update(newUser);
+        setMyTeam(team);
+        localStorage.removeItem('userInfo');
+        localStorage.setItem('userInfo', JSON.stringify(newUser));
+        socket.emit('myTeam', team);
+      })
+
+    socket.on('gameState', gameState => {
+      console.log('gamestate:', gameState)
+      if (prevGameState !== gameState) {
+        setGameState(gameState);
+      }
+    });
+
+    socket.on('updateMessage', newMessages => {
+      console.log('newMessages:', newMessages, messages);
+      if (messages.slice(-1) !== newMessages) {
+        setMessages(arr => [...arr, newMessages]);
+      }
+    });
+
+    socket.on('Clock', clock => setTimer(clock));
+
+    socket.on('AllSubmissions', finalSubmissions => {
+      const teamArray = Object.keys(finalSubmissions);
       setGameState('ready');
-
+      setOtherGuesses({});
       teamArray.forEach(team => {
         const teamAnswers = finalSubmissions[team].answers;
 
@@ -90,7 +93,6 @@ function WebSocketUtility() {
       setFinalAnswers(finalSubmissions);
     });
 
-  if (!isEqual(prevFinalAnswers, finalAnswers)) {
     socket.on('startOver', numOfCategories => {
       const answerMap = resetAnswersAndScores(numOfCategories);
       const teamArray = Object.keys(teams);
@@ -100,29 +102,18 @@ function WebSocketUtility() {
       });
       setFinalAnswers(finalSubs);
       setGameState('ready');
+    });
+
+    socket.on('updateAnswers', newGuesses => {
+      setOtherGuesses(newGuesses);
     })
   }
 
   return (
-    <UserContext.Provider value={{ user, update }}>
-      <TeamsContext.Provider value={teams}>
-        <CategoryContext.Provider value={categories}>
-          <LetterContext.Provider value={currentLetter}>
-            <GameStateContext.Provider value={gameState}>
-              <FinalAnswersContext.Provider value={finalAnswers}>
-                <TeamScoreContext.TeamScoreProvider>
-                  <UserAnswersContext.Provider value={{ userAnswers, updateUA }}>
-                    <App myTeam={myTeam} />
-                  </UserAnswersContext.Provider>
-                </TeamScoreContext.TeamScoreProvider>
-              </FinalAnswersContext.Provider>
-            </GameStateContext.Provider>
-          </LetterContext.Provider>
-        </CategoryContext.Provider>
-      </TeamsContext.Provider>
-    </UserContext.Provider>
+    <div>
+    <App myTeam={myTeam}/>
+    </div>
   )
-
 }
 
 export default WebSocketUtility;
