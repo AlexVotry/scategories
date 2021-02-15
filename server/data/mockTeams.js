@@ -5,9 +5,9 @@ const mockTeams = {
     { name: "Carrol", email: '', team: 'Blue', admin: false, group: 'family' }
   ], 
   Red: [
-    { name: "Hank", email: '', team: 'Red', admin: false, group: 'family' },
-    { name: "Fred", email: '', team: 'Red', admin: false, group: 'family' },
-    { name: "Julie", email: '', team: 'Red', admin: false, group: 'family' }
+    // { name: "Hank", email: '', team: 'Red', admin: false, group: 'family' },
+    // { name: "Fred", email: '', team: 'Red', admin: false, group: 'family' },
+    // { name: "Julie", email: '', team: 'Red', admin: false, group: 'family' }
   ], 
   Green: [
     // { name: "Tammi", email: '', team: 'Green', admin: false, group: 'family' },
@@ -15,7 +15,7 @@ const mockTeams = {
     // { name: "Kermit", email: '', team: 'Green', admin: false, group: 'family' }
   ],
   Purple: [
-    { name: "Dale", email: '', team: 'Purple', admin: false, group: 'family' },
+    // { name: "Dale", email: '', team: 'Purple', admin: false, group: 'family' },
     // { name: "Connie", email: '', team: 'Purple', admin: false, group: 'family' },
     // { name: "Sammantha", email: '', team: 'Purple', admin: false, group: 'family' }
   ], 

@@ -20,6 +20,7 @@ const OtherPlayersCard = ({messages}) => {
   const [teams, setTeams] = TeamsContext.useTeams();
   const team = teams[user.team];
   const others = findOthers(team, user);
+  const scrollWidth = !others.length ? '90%' : '40%';
   
   const otherCard = {
     ...styles.flexRow,
@@ -55,10 +56,16 @@ const OtherPlayersCard = ({messages}) => {
   }
   
   const scrollBarStyle = {
-    width: '40%',
+    width: scrollWidth,
     height: '70vh'
   }
   
+  const renderOtherGameCard = () => {
+    if (!others.length) return <div></div>;
+    <div id="otherPlayers" className="otherPlayers" style={cardStyle} >
+      {renderOthers()}
+    </div>
+  }
   const renderOthers = () => {
     return others.map(({name}) => {
       return (
@@ -85,7 +92,7 @@ const OtherPlayersCard = ({messages}) => {
     });
   }
 
-  if (!others.length) return <div></div>;
+  
   
   return useMemo(() => {
     return (
@@ -95,9 +102,7 @@ const OtherPlayersCard = ({messages}) => {
             {showMessages()}
           </div>
         </Scrollbars>
-        <div id="otherPlayers" className="otherPlayers" style={cardStyle} >
-          {renderOthers()}
-        </div>
+        {renderOtherGameCard()}
       </div>
     )
   }, [messages])

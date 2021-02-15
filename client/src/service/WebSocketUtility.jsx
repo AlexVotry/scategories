@@ -77,6 +77,11 @@ function WebSocketUtility() {
       }
     });
 
+    socket.on('everyoneMessage', newMessages => {
+      console.log('allMessage:', newMessages, messages);
+        // setMessages(arr => [...arr, newMessages]);
+    });
+
     socket.on('Clock', clock => setTimer(clock));
 
     socket.on('AllSubmissions', finalSubmissions => {
