@@ -17,4 +17,4 @@ When time is up, the scores are added up.
 
 If an answer isn't agreed upon, you can click on it and it will be crossed out and not added to the score. Any duplicate answer between opposing teams will also be crossed out.
 
-![Screenshot](screenshots/scattegories_removePt)
+![Screenshot](screenshots/scattegories_removePt.png)
