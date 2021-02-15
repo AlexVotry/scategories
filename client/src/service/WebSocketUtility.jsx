@@ -1,6 +1,6 @@
-import React, { useState, useContext, useEffect, useMemo } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import socket from './socketConnection';
-import { find, remove, isEqual, isEmpty, set } from 'lodash';
+import { isEqual, isEmpty } from 'lodash';
 import { assignTeam } from '../service/parseTeams';
 import { resetAnswersAndScores } from '../service/reset';
 
@@ -71,10 +71,7 @@ function WebSocketUtility() {
     });
 
     socket.on('updateMessage', newMessages => {
-      console.log('newMessages:', newMessages, messages);
-      if (messages.slice(-1) !== newMessages) {
-        setMessages(arr => [...arr, newMessages]);
-      }
+      setMessages(arr => [...arr, newMessages]);
     });
 
     socket.on('Clock', clock => setTimer(clock));

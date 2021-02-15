@@ -50,7 +50,7 @@ function socketMain(io, socket) {
   });
 
   socket.on('createTeams', async data => {
-    teams = await createMockTeams(players, teamGroup);
+    teams = await createTeams(players, teamGroup);
     totalPlayers = count = players.length;
     assignTeams(teams);
     io.to(room).emit('newTeams', teams);
@@ -97,7 +97,12 @@ function socketMain(io, socket) {
   });
   
   socket.on('newMessage', messages => {
-    io.to(messages.team).emit('updateMessage', messages);
+    const {team} = messages;
+    if (teams[team].length > 1) {
+      io.to(team).emit('updateMessage', messages);
+    } else {
+      io.to(teamGroup).emit('updateMessage', messages);
+    }
   });
   
   // times up! everyone submits answer. 
