@@ -61,10 +61,13 @@ const OtherPlayersCard = ({messages}) => {
   }
   
   const renderOtherGameCard = () => {
+    console.log('other length:', others.length)
     if (!others.length) return <div></div>;
-    <div id="otherPlayers" className="otherPlayers" style={cardStyle} >
+    return (
+      <div id="otherPlayers" className="otherPlayers" style={cardStyle} >
       {renderOthers()}
-    </div>
+      </div>
+    );
   }
   const renderOthers = () => {
     return others.map(({name}) => {
