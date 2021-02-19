@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-// const { User } = require('./models');
 const { mongoUrl } = require('./secrets');
 
 const {handleGame, stopTimer, resetGame } = require('./services/handleGame');

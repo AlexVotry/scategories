@@ -1,22 +1,15 @@
-// const express = require('express');
-// const cluster = require('cluster');
-// const net = require('net');
 const socketio = require('socket.io');
-// const io_redis = require('socket.io-redis');
-// const num_processors = require('os').cpus().length;
-// const farmhash = require('farmhash');
 const socketMain = require('./socketMain');
-var express = require('express');
-var app = express();
-// var path = require('path');
-var server = require('http').createServer(app);
+const express = require('express');
+const app = express();
+const { reactUrl } = require('./secrets');
+const server = require('http').createServer(app);
 const io = require('socket.io')(server, {
   cors: {
-    origin: 'http://localhost:5000'
+    origin: reactUrl
   }
 });
-const PORT = process.env.PORT || 8181;
-
+const PORT = process.env.PORT || 3000;
 
   server.listen(PORT, () => console.log(`Master listening on ${PORT}...`))
   io.on('connection', socket => {
